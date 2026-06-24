@@ -6,7 +6,7 @@ import { getReportsList, deleteReport } from '@/services/reports';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { FileText, Trash2, Eye, UploadCloud, Calendar, Database } from 'lucide-react';
+import { FileText, Trash2, Eye, UploadCloud, Calendar, Database, FileDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -64,13 +64,18 @@ export default function ReportsHistoryPage() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-50">Reports History</h1>
           <p className="text-gray-500 dark:text-zinc-400 mt-2">Manage your uploaded clinical documents and lab results.</p>
         </div>
-        <Button onClick={() => router.push('/reports/upload')} className="shadow-sm rounded-full px-6">
-          <UploadCloud className="mr-2 h-4 w-4" /> Upload New Report
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={() => router.push('/reports/summary')} className="shadow-sm rounded-full px-6 text-gray-600 dark:text-zinc-400">
+            <FileDown className="mr-2 h-4 w-4" /> Export Summary
+          </Button>
+          <Button onClick={() => router.push('/reports/upload')} className="shadow-sm rounded-full px-6">
+            <UploadCloud className="mr-2 h-4 w-4" /> Upload New Report
+          </Button>
+        </div>
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <Card className="rounded-[32px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden p-0 gap-0">
           <CardHeader className="bg-gray-50/50 dark:bg-zinc-900/50 px-8 py-6 border-b dark:border-zinc-800">
             <CardTitle className="text-xl">Document Archive</CardTitle>
             <CardDescription className="mt-1">All processed reports and intelligence data</CardDescription>

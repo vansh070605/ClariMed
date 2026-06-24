@@ -1,7 +1,9 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings
+from jose import jwt, JWTError
+from app.core.config import settings as core_settings
 
 # --- Configuration ---
 class Settings(BaseSettings):
@@ -70,13 +72,45 @@ def deep_health_check():
         "qdrant": "pending"
     }
 
+# --- WebSockets ---
+from app.websockets import manager
+
+@app.websocket("/ws/notifications")
+async def websocket_endpoint(websocket: WebSocket):
+    token = websocket.cookies.get("access_token")
+    if not token:
+        await websocket.close(code=1008)
+        return
+        
+    try:
+        payload = jwt.decode(token, core_settings.JWT_SECRET, algorithms=[core_settings.JWT_ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            await websocket.close(code=1008)
+            return
+    except JWTError:
+        await websocket.close(code=1008)
+        return
+
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            # We don't expect messages from client for now, just keep connection alive
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, user_id)
+
 # --- Routes ---
 from app.auth.router import router as auth_router
 from app.reports.router import router as reports_router
 from app.trends.router import router as trends_router
 from app.dashboard.router import router as dashboard_router
+from app.share.router import router as share_router
+from app.chat.router import router as chat_router
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(reports_router, prefix="/reports", tags=["Reports"])
 app.include_router(trends_router, prefix="/trends", tags=["Trends"])
 app.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
+app.include_router(share_router, prefix="/share", tags=["Share"])
+app.include_router(chat_router, prefix="/chat", tags=["Chat"])

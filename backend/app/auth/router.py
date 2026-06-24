@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.database.models import User
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserCreate, UserResponse, UserUpdate, PasswordUpdate
 from app.schemas.auth import Token
 from app.auth.security import get_password_hash, verify_password, create_access_token
 from app.auth.dependencies import get_current_user
@@ -79,3 +79,30 @@ def logout(response: Response):
 @router.get("/me", response_model=UserResponse)
 def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
     return current_user
+
+@router.put("/profile", response_model=UserResponse)
+def update_profile(
+    user_in: UserUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    current_user.name = user_in.name
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@router.put("/password")
+def update_password(
+    passwords: PasswordUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    if not verify_password(passwords.current_password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect current password"
+        )
+    
+    current_user.password_hash = get_password_hash(passwords.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}

@@ -92,7 +92,7 @@ export default function UploadPage() {
         </p>
       </div>
 
-      <Card className="rounded-[32px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+      <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden p-0 gap-0">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2">
             

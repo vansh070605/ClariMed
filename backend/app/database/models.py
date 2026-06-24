@@ -82,3 +82,16 @@ class TrendSnapshot(Base):
     trend_data = Column(JSONB, nullable=False)
 
     user = relationship("User")
+
+class SharedLink(Base):
+    __tablename__ = "shared_links"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    token = Column(String(255), unique=True, index=True, nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    report_id = Column(UUID(as_uuid=True), ForeignKey("reports.id", ondelete="CASCADE"), nullable=True, index=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User")
+    report = relationship("Report")

@@ -9,6 +9,7 @@ from app.auth.dependencies import get_current_user
 from app.schemas.report import ReportResponse
 from app.core.config import settings
 from app.reports.parser import extract_text_from_pdf
+from app.websockets import manager
 
 router = APIRouter(tags=["Reports"])
 
@@ -229,6 +230,13 @@ async def analyze_report(
     for db_m, final_m in zip(db_measurements, final_measurements):
         db_m.overall_confidence = final_m.get("overall_confidence")
     
+    await manager.send_personal_message({
+        "type": "NOTIFICATION",
+        "title": "Extraction Complete",
+        "message": "Successfully extracted clinical biomarkers from the report.",
+        "report_id": str(report.id)
+    }, str(current_user.id))
+    
     return db_measurements
 
 from app.intelligence.summarizer import generate_patient_summary
@@ -272,5 +280,12 @@ async def summarize_report(
         
     report.patient_summary = summary
     db.commit()
+    
+    await manager.send_personal_message({
+        "type": "NOTIFICATION",
+        "title": "Summary Ready",
+        "message": "AI-generated clinical summary is now available.",
+        "report_id": str(report.id)
+    }, str(current_user.id))
     
     return JSONResponse(status_code=200, content=summary)

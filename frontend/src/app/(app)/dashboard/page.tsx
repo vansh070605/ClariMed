@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { ShareWithDoctorModal } from '@/components/ShareWithDoctorModal';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -51,17 +52,26 @@ export default function DashboardPage() {
     >
       <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl bg-blue-600 px-8 py-10 text-white shadow-lg">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight">Welcome Back{user?.email ? `, ${user.email.split('@')[0]}` : ''}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome Back{user?.name ? `, ${user.name}` : (user?.email ? `, ${user.email.split('@')[0]}` : '')}</h1>
           <p className="mt-4 text-blue-100 text-lg">
             Track, analyze and understand your health reports with evidence-backed clinical intelligence.
           </p>
-          <Button 
-            variant="secondary" 
-            className="mt-6 font-semibold shadow-sm"
-            onClick={() => router.push('/reports/upload')}
-          >
-            <UploadCloud className="mr-2 h-4 w-4" /> Upload New Report
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              variant="secondary" 
+              className="mt-6 font-semibold shadow-sm"
+              onClick={() => router.push('/reports/upload')}
+            >
+              <UploadCloud className="mr-2 h-4 w-4" /> Upload New Report
+            </Button>
+            <div className="mt-6">
+              <ShareWithDoctorModal>
+                <Button variant="outline" className="font-semibold shadow-sm bg-blue-700 hover:bg-blue-800 text-white border-transparent">
+                  Share Health Profile
+                </Button>
+              </ShareWithDoctorModal>
+            </div>
+          </div>
         </div>
         {/* Subtle Healthcare Visual Background */}
         <div className="absolute right-0 top-0 -mr-20 -mt-20 opacity-10 pointer-events-none">
@@ -71,7 +81,7 @@ export default function DashboardPage() {
 
       <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         
-        <Card className="rounded-[24px] shadow-sm hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow border-0 bg-white/50 dark:bg-zinc-950/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -91,7 +101,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[24px] shadow-sm hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-md transition-shadow border-0 bg-white/50 dark:bg-zinc-950/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
@@ -110,7 +120,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card className="rounded-[24px] shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+        <Card className="hover:shadow-md transition-shadow border-0 border-l-4 border-l-red-500 bg-white/50 dark:bg-zinc-950/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
@@ -129,7 +139,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card className="rounded-[24px] shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+        <Card className="hover:shadow-md transition-shadow border-0 border-l-4 border-l-green-500 bg-white/50 dark:bg-zinc-950/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
@@ -150,7 +160,7 @@ export default function DashboardPage() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <Card className="rounded-[24px] shadow-sm overflow-hidden border-0 ring-1 ring-gray-200 dark:ring-zinc-800">
+        <Card className="border-0 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl p-0 gap-0">
           <CardHeader className="flex flex-row items-center justify-between bg-gray-50/50 dark:bg-zinc-900/50 px-6 py-5 border-b dark:border-zinc-800">
             <div>
               <CardTitle className="text-xl">Recent Reports</CardTitle>

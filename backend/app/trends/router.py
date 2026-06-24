@@ -30,7 +30,7 @@ from app.database.models import ReportMeasurement
 from sqlalchemy import asc
 from typing import Dict, List, Any
 
-@router.get("/history", response_model=Dict[str, List[Dict[str, Any]]], status_code=status.HTTP_200_OK)
+@router.get("/history", response_model=Dict[str, Dict[str, Any]], status_code=status.HTTP_200_OK)
 async def get_trends_history(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -39,14 +39,17 @@ async def get_trends_history(
         ReportMeasurement.user_id == current_user.id
     ).order_by(asc(ReportMeasurement.created_at)).all()
     
-    history: Dict[str, List[Dict[str, Any]]] = {}
+    history: Dict[str, Dict[str, Any]] = {}
     
     for m in measurements:
         name = m.biomarker_name
         if name not in history:
-            history[name] = []
+            history[name] = {
+                "category": m.category or "Uncategorized",
+                "history": []
+            }
             
-        history[name].append({
+        history[name]["history"].append({
             "date": m.created_at.isoformat(),
             "value": m.value
         })

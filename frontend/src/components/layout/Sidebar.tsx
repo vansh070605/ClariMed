@@ -10,7 +10,8 @@ import {
   TrendingUp,
   Settings,
   LogOut,
-  Activity
+  Activity,
+  Bot
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -23,12 +24,13 @@ export function Sidebar() {
     { name: 'Reports', href: '/reports', icon: FileText },
     { name: 'Upload Report', href: '/reports/upload', icon: UploadCloud },
     { name: 'Trends', href: '/trends', icon: TrendingUp },
+    { name: 'AI Assistant', href: '/chat', icon: Bot },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 transition-colors duration-200">
-      <div className="flex h-16 items-center border-b dark:border-zinc-800 px-6">
+    <div className="flex h-full w-64 flex-col border-r border-gray-200/50 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-xl dark:border-zinc-800/50 transition-colors duration-200 print:hidden shadow-sm">
+      <div className="flex h-16 items-center border-b border-gray-200/50 dark:border-zinc-800/50 px-6">
         <Activity className="h-6 w-6 text-blue-600 dark:text-blue-500" />
         <span className="ml-2 text-xl font-bold text-gray-900 dark:text-zinc-50">ClariMed</span>
       </div>
@@ -71,7 +73,7 @@ export function Sidebar() {
           })}
         </nav>
       </div>
-      <div className="border-t dark:border-zinc-800 p-4">
+      <div className="border-t border-gray-200/50 dark:border-zinc-800/50 p-4">
         <button
           onClick={logout}
           className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-colors"

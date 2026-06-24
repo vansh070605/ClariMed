@@ -128,3 +128,42 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    margin: 1cm;
+  }
+  body, main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .dark {
+    --background: oklch(0.98 0 0) !important;
+    --foreground: oklch(0.1 0 0) !important;
+    --card: oklch(1 0 0) !important;
+    --card-foreground: oklch(0.1 0 0) !important;
+    --popover: oklch(1 0 0) !important;
+    --popover-foreground: oklch(0.1 0 0) !important;
+    --primary: oklch(0.488 0.243 264.376) !important;
+    --primary-foreground: oklch(0.985 0 0) !important;
+    --secondary: oklch(0.97 0 0) !important;
+    --secondary-foreground: oklch(0.205 0 0) !important;
+    --muted: oklch(0.96 0 0) !important;
+    --muted-foreground: oklch(0.45 0 0) !important;
+    --accent: oklch(0.96 0 0) !important;
+    --accent-foreground: oklch(0.205 0 0) !important;
+    --destructive: oklch(0.577 0.245 27.325) !important;
+    --border: oklch(0.92 0 0) !important;
+    --input: oklch(0.92 0 0) !important;
+    --ring: oklch(0.488 0.243 264.376) !important;
+  }
+  * {
+    color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Specific override for black backgrounds in tailwind utility classes during print */
+  .dark .bg-black, .dark .bg-zinc-900, .dark .bg-zinc-950 {
+    background-color: transparent !important;
+  }
+}

@@ -7,9 +7,11 @@ import { getReportDetails } from '@/services/reports';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Calendar, Database, Activity, Beaker, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FileText, Calendar, Database, Activity, Beaker, CheckCircle2, AlertTriangle, Info, Download } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { motion } from 'framer-motion';
+import { ShareWithDoctorModal } from '@/components/ShareWithDoctorModal';
 
 export default function ReportDetailsPage() {
   const params = useParams();
@@ -77,6 +79,11 @@ export default function ReportDetailsPage() {
           <p className="text-gray-500 dark:text-zinc-400 mt-2">Comprehensive clinical analysis and biomarker extraction.</p>
         </div>
         <div className="flex items-center gap-3">
+          <ShareWithDoctorModal reportId={reportId} />
+          <Button variant="outline" size="sm" className="print:hidden rounded-full font-medium" onClick={() => window.print()}>
+            <Download className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
+            Download PDF
+          </Button>
           <Badge variant="outline" className="px-3 py-1 bg-white dark:bg-zinc-900 text-sm font-medium">
             <Calendar className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
             {new Date(report.created_at).toLocaleDateString()}
@@ -90,28 +97,28 @@ export default function ReportDetailsPage() {
 
       {/* 1. Overview Section */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-950">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Calendar className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
             <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Processed On</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">{new Date(report.created_at).toLocaleDateString()}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-950">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Activity className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
             <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Analysis Status</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1 capitalize">{report.status}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-950">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <FileText className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
             <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Document Length</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">{report.page_count || 1} Pages</p>
           </CardContent>
         </Card>
-        <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-950">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Database className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
             <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">File Size</p>
@@ -124,7 +131,7 @@ export default function ReportDetailsPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {/* 2. Clinical Summary */}
           <motion.div variants={itemVariants} className="md:col-span-2">
-            <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-blue-100 dark:ring-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 h-full">
+            <Card className="border-0 ring-1 ring-blue-100 dark:ring-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 h-full">
               <CardHeader className="pb-4 border-b border-blue-100 dark:border-blue-900/30">
                 <CardTitle className="text-xl text-blue-900 dark:text-blue-100 flex items-center">
                   <Activity className="w-5 h-5 mr-2" />
@@ -164,7 +171,7 @@ export default function ReportDetailsPage() {
 
           {/* 3. Key Findings */}
           <motion.div variants={itemVariants} className="md:col-span-1">
-            <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 h-full">
+            <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 h-full">
               <CardHeader className="pb-4 border-b border-gray-100 dark:border-zinc-800/50">
                 <CardTitle className="text-xl flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-orange-500" />
@@ -207,7 +214,7 @@ export default function ReportDetailsPage() {
 
       {/* 4. Measurements Table */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-[24px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+        <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 p-0 gap-0">
           <CardHeader className="bg-gray-50/50 dark:bg-zinc-900/50 px-6 py-5 border-b dark:border-zinc-800">
             <CardTitle className="flex items-center text-xl">
               <Beaker className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
