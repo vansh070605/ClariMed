@@ -1,78 +1,110 @@
-# ClariMed AI
+# ClariMed
 
-## Project Overview
-ClariMed AI is an Explainable Healthcare Copilot designed to help patients understand complex medical reports through advanced artificial intelligence, securely and accurately.
+## 1. Project Overview
 
-## Problem Statement
-Medical reports are notoriously difficult for patients to understand. They are filled with clinical jargon, raw biomarker values, and complex terminology that leave patients confused and anxious, often requiring them to wait for a doctor's appointment just to get a basic summary of their own health data.
+**The Problem:**
+- Medical reports are often written in highly technical jargon that patients struggle to understand.
+- Biomarker trends are difficult to track manually across multiple PDFs.
+- Long-term patient health data remains fragmented, making it hard to visualize improving or worsening conditions over time.
 
-## Solution
-ClariMed AI bridges the gap between raw medical data and patient understanding by combining:
-- **OCR (Optical Character Recognition)**: To extract text directly from PDFs and image scans of medical reports.
-- **Medical NLP (Natural Language Processing)**: To accurately identify and extract structured medical entities like biomarkers, ranges, and test names.
-- **RAG (Retrieval-Augmented Generation)**: To ground AI explanations in authoritative medical guidelines (WHO, NIH).
-- **Clinical Insights**: To recognize evidence-based patterns across multiple biomarkers.
-- **Health Copilot**: To provide personalized, educational observations on historical health data.
-- **Explainability**: To ensure every insight generated is accompanied by the underlying source evidence and a calibrated confidence score.
+**The Solution:**
+ClariMed is an Explainable Healthcare Copilot that transforms static PDF lab reports into actionable health intelligence. It converts reports into:
+- Structured biomarker data
+- Deterministic clinical interpretations
+- Evidence-backed summaries
+- Longitudinal health trends
 
-## Architecture Overview
-The system relies on a scalable, containerized architecture that separates concerns between processing, reasoning, and presentation:
-1. **Extraction Pipeline**: Ingests files, runs OCR, and extracts entities via SciSpaCy.
-2. **Reasoning Pipeline**: LangChain/LangGraph orchestrated agents that retrieve evidence and generate insights.
-3. **Safety Pipeline**: A strict compliance layer that filters out any diagnostic language to ensure the tool remains strictly educational.
+## 2. Key Features
 
-## Technology Stack
+- **Secure Authentication:** HttpOnly Cookie-based JWT authentication with session hydration.
+- **PDF Upload:** Drag-and-drop secure file uploading.
+- **Deterministic Extraction:** Rule-based parser for structured extraction of biomarkers, values, units, and reference ranges.
+- **Clinical Interpretation Engine:** Deterministic logic evaluating biomarker flags and severity without relying on AI hallucination.
+- **Evidence-Based Summaries:** Contextual, patient-friendly summaries mapping structured findings into readable assessments.
+- **Longitudinal Trend Analysis:** Historic tracking of recurring biomarkers dynamically plotted.
+- **Dashboard & Report History:** Complete KPI visualization of user data, upload history, and trending health metrics.
+
+## 3. Why Deterministic Before AI?
+
+Many healthcare applications send raw medical data directly to LLMs, which introduces high risk for medical hallucinations and non-reproducible outcomes.
+
+ClariMed instead strictly adheres to a deterministic pipeline:
+
+```text
+PDF → Extraction → Validation → Interpretation → Summary
+```
+
+By ensuring that the core data extraction and clinical flag evaluations are deterministic and rule-based, we guarantee:
+- **Reliability:** The same PDF always produces the same parsed metrics.
+- **Transparency:** The logic mapping abnormal flags relies entirely on documented reference ranges.
+- **Reduced Hallucinations:** Any future LLM usage is strictly limited to translating *already structured* interpretations into human-readable tone.
+- **Easier Debugging:** Pipeline stages are fully isolated.
+
+## 4. Architecture Overview
+
+For deep technical insights and flowcharts, please refer to the [Architecture Documentation](docs/architecture.md).
+
+## 5. Tech Stack
+
 **Frontend:**
-- Next.js 15
+- Next.js 15 (App Router)
 - TypeScript
 - TailwindCSS
+- shadcn/ui
+- TanStack Query
+- Recharts
 
 **Backend:**
 - FastAPI
 - PostgreSQL
-- Qdrant
+- SQLAlchemy
+- Alembic
+- PyMuPDF
 
-**AI:**
-- LangChain
-- LangGraph
-- Gemini
+## 6. Setup Instructions
 
-## Development Roadmap
-✅ Phase 1 – Infrastructure Setup
-🚧 Phase 2 – Authentication & User Management
-⬜ Phase 3 – Report Upload & Metadata Storage
-⬜ Phase 4 – OCR Pipeline
-⬜ Phase 5 – Medical Entity Extraction
-⬜ Phase 6 – RAG
-⬜ Phase 7 – Simplification
-⬜ Phase 8 – Clinical Insights
-⬜ Phase 9 – Trend Analysis
-⬜ Phase 9.5 – Health Copilot
-⬜ Phase 10 – Knowledge Graph
-⬜ Phase 11 – Graph-RAG
-⬜ Phase 12 – LangGraph
-⬜ Phase 13 – Deployment & Monitoring
-
-## Local Development
-ClariMed AI is fully containerized. To spin up the entire development environment (Frontend, Backend, Postgres, and Qdrant):
-
+### Backend Startup
 ```bash
-docker compose up --build
+cd backend
+python -m venv venv
+source venv/bin/activate # or .\venv\Scripts\activate on Windows
+pip install -r requirements.txt
+
+# Start local server
+uvicorn app.main:app --reload
 ```
 
-### Current Status
-**Phase 1 is complete.** Infrastructure, databases, and core application skeletons are operational.
+### Database Migration
+```bash
+cd backend
+alembic upgrade head
+```
 
-## Development Branch Workflow
-We follow a structured Git branching strategy to ensure stability:
-- `main` → Stable milestones only (Production-ready states).
-- `develop` → Active development and integration branch.
+### Frontend Startup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-**Future Feature Branches:**
-Branch off of `develop` for specific features:
-- `feature/auth`
-- `feature/uploads`
-- `feature/rag`
-- `feature/graph-rag`
+### Docker Commands
+```bash
+docker-compose up -d # Starts Postgres and backend
+```
 
-Merge feature branches back into `develop` via Pull Requests.
+## 7. API Overview
+
+- **Auth:** `POST /auth/register`, `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`
+- **Reports:** `POST /reports/upload`, `GET /reports`, `GET /reports/{id}`
+- **Intelligence:** `POST /reports/{id}/analyze`, `POST /reports/{id}/summarize`
+- **Dashboard & Trends:** `GET /dashboard`, `GET /trends`, `GET /trends/history`
+
+*See [API Documentation](docs/api.md) for detailed payload structures.*
+
+## 8. Future Roadmap
+
+- **OCR Recovery Layer:** Adding Tesseract/AWS Textract for scanned image-based PDFs.
+- **Multi-Lab Support:** Advanced parsers for varying vendor templates (Quest, LabCorp).
+- **Cloud Storage:** S3 bucket integration replacing local ephemeral storage.
+- **Provider Dashboard:** A secondary interface allowing doctors to view multi-patient aggregate data.
+- **Production Monitoring:** Datadog/Sentry integration for observability.

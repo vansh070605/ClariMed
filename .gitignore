@@ -43,3 +43,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Data & Uploads
+*.db
+backend/test_e2e.db
+backend/uploads/
+uploads/

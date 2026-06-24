@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://postgres:postgres@localhost:5432/clarimed"
     qdrant_url: str = "http://localhost:6333"
     gemini_api_key: str = ""
+    allowed_origins: str = "http://localhost:3000,http://localhost:3001"
 
     class Config:
         env_file = ".env"
@@ -31,9 +32,11 @@ app = FastAPI(
 )
 
 # CORS Configuration
+origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Update for production
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -67,6 +70,13 @@ def deep_health_check():
         "qdrant": "pending"
     }
 
-# We will include routers from other modules in subsequent phases
-# from app.auth import router as auth_router
-# app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+# --- Routes ---
+from app.auth.router import router as auth_router
+from app.reports.router import router as reports_router
+from app.trends.router import router as trends_router
+from app.dashboard.router import router as dashboard_router
+
+app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(reports_router, prefix="/reports", tags=["Reports"])
+app.include_router(trends_router, prefix="/trends", tags=["Trends"])
+app.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
