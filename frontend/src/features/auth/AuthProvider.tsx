@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(true);
         const userData = await getCurrentUser();
         setUser(userData);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -48,8 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     try {
       await apiLogout();
-    } catch(e) {
-      // ignore
+    } catch {
+      return false;
     }
     setUser(null);
     router.push('/login');

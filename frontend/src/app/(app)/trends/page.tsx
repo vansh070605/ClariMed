@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -6,9 +7,10 @@ import { getTrends, getTrendsHistory } from '@/services/trends';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Activity, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function TrendsPage() {
   const [selectedBiomarker, setSelectedBiomarker] = useState<string>('hba1c');
@@ -26,131 +28,199 @@ export default function TrendsPage() {
   const renderClassificationBadge = (classification: string) => {
     switch (classification) {
       case 'IMPROVING':
-        return <Badge className="bg-green-100 text-green-800" variant="outline"><TrendingUp className="w-3 h-3 mr-1"/> Improving</Badge>;
+        return <Badge className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-900" variant="outline"><TrendingUp className="w-3 h-3 mr-1"/> Improving</Badge>;
       case 'DECLINING':
-        return <Badge className="bg-red-100 text-red-800" variant="outline"><TrendingDown className="w-3 h-3 mr-1"/> Declining</Badge>;
+        return <Badge className="bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900" variant="outline"><TrendingDown className="w-3 h-3 mr-1"/> Declining</Badge>;
       case 'STABLE':
-        return <Badge className="bg-blue-100 text-blue-800" variant="outline"><Minus className="w-3 h-3 mr-1"/> Stable</Badge>;
+        return <Badge className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900" variant="outline"><Minus className="w-3 h-3 mr-1"/> Stable</Badge>;
       default:
-        return <Badge variant="secondary">Insufficient Data</Badge>;
+        return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700">Insufficient Data</Badge>;
     }
   };
 
   const currentChartData = historyData && historyData[selectedBiomarker] 
     ? historyData[selectedBiomarker].map(d => ({
         ...d,
-        displayDate: new Date(d.date).toLocaleDateString()
+        displayDate: new Date(d.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
       }))
     : [];
 
-  // Filter trends to only show the ones we want to highlight in MVP
   const supportedBiomarkers = ['hba1c', 'hemoglobin', 'ldl_cholesterol', 'hdl_cholesterol', 'glucose'];
-  
   const displayTrends = trendsData?.trends.filter(t => supportedBiomarkers.includes(t.biomarker)) || [];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as any, stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Longitudinal Trends</h1>
-        <p className="text-gray-500 mt-2">Track how your key biomarkers change over time.</p>
-      </div>
+    <motion.div 
+      className="space-y-8 pb-12"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={itemVariants}>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-50">Health Trends</h1>
+        <p className="text-gray-500 dark:text-zinc-400 mt-2">Track biomarker progression across your clinical history.</p>
+      </motion.div>
 
       {(trendsLoading || historyLoading) ? (
-        <div className="text-gray-500 p-8">Loading trend analysis...</div>
+        <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Loading trend analysis...</div>
       ) : (!trendsData || trendsData.trends.length === 0) ? (
-        <Card>
-          <CardContent className="pt-6 text-center py-12">
-            <TrendingUp className="mx-auto h-12 w-12 text-gray-300" />
-            <h3 className="mt-2 text-sm font-semibold text-gray-900">No trend data available</h3>
-            <p className="mt-1 text-sm text-gray-500">Upload multiple reports to begin tracking your health over time.</p>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="rounded-[32px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+            <CardContent className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="h-20 w-20 bg-blue-50 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6">
+                <TrendingUp className="h-10 w-10 text-blue-300 dark:text-blue-500/50" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-zinc-100">Insufficient Data for Trends</h3>
+              <p className="mt-2 text-gray-500 dark:text-zinc-400 max-w-sm">Upload at least two medical reports to unlock longitudinal tracking and AI trend analysis.</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
         <>
-          {/* Chart Section */}
-          <Card>
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2">
-              <div>
-                <CardTitle>Historical Progression</CardTitle>
-                <CardDescription>Visualize the timeline of your selected biomarker.</CardDescription>
-              </div>
-              <div className="mt-4 sm:mt-0">
-                <Select value={selectedBiomarker} onValueChange={(val) => { if(val) setSelectedBiomarker(val); }}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select Biomarker" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {supportedBiomarkers.map((bm) => (
-                      <SelectItem key={bm} value={bm} className="capitalize">
-                        {bm.replace('_', ' ')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] w-full mt-4">
-                {currentChartData.length > 1 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={currentChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="displayDate" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="value" 
-                        stroke="#2563eb" 
-                        strokeWidth={3}
-                        activeDot={{ r: 8 }} 
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-gray-400 border border-dashed rounded-md">
-                    Not enough data points to chart {selectedBiomarker.replace('_', ' ')}. Need at least 2 reports.
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['IMPROVING', 'STABLE', 'DECLINING'].map((classification) => {
+              const count = displayTrends.filter(t => t.classification === classification).length;
+              const isImproving = classification === 'IMPROVING';
+              const isDeclining = classification === 'DECLINING';
+              
+              return (
+                <Card key={classification} className={`rounded-[24px] shadow-sm border-0 ring-1 ${isImproving ? 'ring-green-100 dark:ring-green-900/30 bg-green-50/30 dark:bg-green-900/10' : isDeclining ? 'ring-red-100 dark:ring-red-900/30 bg-red-50/30 dark:bg-red-900/10' : 'ring-gray-200 dark:ring-zinc-800 bg-white dark:bg-zinc-950'}`}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-gray-500 dark:text-zinc-400 capitalize">{classification.toLowerCase()} Biomarkers</p>
+                      {isImproving ? <TrendingUp className="h-5 w-5 text-green-500" /> : isDeclining ? <TrendingDown className="h-5 w-5 text-red-500" /> : <Minus className="h-5 w-5 text-blue-500" />}
+                    </div>
+                    <p className={`text-3xl font-bold mt-2 ${isImproving ? 'text-green-700 dark:text-green-400' : isDeclining ? 'text-red-700 dark:text-red-400' : 'text-gray-900 dark:text-zinc-50'}`}>{count}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </motion.div>
 
-          {/* Table Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Trend Classifications</CardTitle>
-              <CardDescription>Deterministic analysis comparing your earliest and latest results.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Biomarker</TableHead>
-                    <TableHead>Classification</TableHead>
-                    <TableHead className="text-right">Change %</TableHead>
-                    <TableHead className="text-right">Baseline</TableHead>
-                    <TableHead className="text-right">Latest</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayTrends.map((trend) => (
-                    <TableRow key={trend.biomarker}>
-                      <TableCell className="font-medium capitalize">{trend.biomarker.replace('_', ' ')}</TableCell>
-                      <TableCell>{renderClassificationBadge(trend.classification)}</TableCell>
-                      <TableCell className="text-right font-mono">
-                        {trend.change_percent > 0 ? '+' : ''}{trend.change_percent.toFixed(1)}%
-                      </TableCell>
-                      <TableCell className="text-right text-gray-500">{trend.first_value}</TableCell>
-                      <TableCell className="text-right font-bold">{trend.latest_value}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants}>
+            <Card className="rounded-[32px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-50/50 dark:bg-zinc-900/50 px-8 py-6 border-b dark:border-zinc-800">
+                <div>
+                  <CardTitle className="text-xl">Progression Analysis</CardTitle>
+                  <CardDescription className="mt-1">Visualize your health trajectory</CardDescription>
+                </div>
+                <div className="mt-4 sm:mt-0 bg-white dark:bg-zinc-950 rounded-xl p-1 shadow-sm border dark:border-zinc-800">
+                  <Select value={selectedBiomarker} onValueChange={(val) => { if(val) setSelectedBiomarker(val); }}>
+                    <SelectTrigger className="w-[200px] border-0 ring-0 focus:ring-0 shadow-none bg-transparent">
+                      <SelectValue placeholder="Select Biomarker" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-gray-200 dark:border-zinc-800 shadow-xl">
+                      {supportedBiomarkers.map((bm) => (
+                        <SelectItem key={bm} value={bm} className="capitalize rounded-lg focus:bg-blue-50 dark:focus:bg-zinc-800 cursor-pointer">
+                          {bm.replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="h-[400px] w-full">
+                  {currentChartData.length > 1 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={currentChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-zinc-800" />
+                        <XAxis 
+                          dataKey="displayDate" 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{ fill: '#6b7280', fontSize: 12 }} 
+                          dy={10}
+                        />
+                        <YAxis 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{ fill: '#6b7280', fontSize: 12 }} 
+                        />
+                        <Tooltip 
+                          contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--background)' }}
+                          itemStyle={{ color: '#2563eb', fontWeight: 600 }}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="value" 
+                          stroke="#2563eb" 
+                          strokeWidth={3}
+                          fillOpacity={1} 
+                          fill="url(#colorValue)" 
+                          activeDot={{ r: 6, strokeWidth: 0, fill: '#2563eb' }} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-gray-400 dark:text-zinc-600 border-2 border-dashed border-gray-200 dark:border-zinc-800 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/30">
+                      <Activity className="h-8 w-8 mb-3 opacity-50" />
+                      <p>Insufficient data points to map {selectedBiomarker.replace('_', ' ')} trajectory.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <Card className="rounded-[32px] shadow-sm border-0 ring-1 ring-gray-200 dark:ring-zinc-800 overflow-hidden">
+              <CardHeader className="bg-gray-50/50 dark:bg-zinc-900/50 px-8 py-6 border-b dark:border-zinc-800">
+                <CardTitle className="text-xl">Trend Overview</CardTitle>
+                <CardDescription className="mt-1">Deterministic intelligence comparing baseline to latest results.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-gray-50/80 dark:bg-zinc-900/80">
+                      <TableRow className="border-b-gray-200 dark:border-b-zinc-800">
+                        <TableHead className="px-8 h-12">Biomarker</TableHead>
+                        <TableHead>Classification</TableHead>
+                        <TableHead className="text-right">Change</TableHead>
+                        <TableHead className="text-right">Baseline</TableHead>
+                        <TableHead className="text-right px-8">Latest</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {displayTrends.map((trend) => (
+                        <TableRow key={trend.biomarker} className="border-b-gray-100 dark:border-b-zinc-800/50 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer" onClick={() => setSelectedBiomarker(trend.biomarker)}>
+                          <TableCell className="font-semibold text-gray-900 dark:text-zinc-100 px-8 py-5 capitalize">{trend.biomarker.replace('_', ' ')}</TableCell>
+                          <TableCell>{renderClassificationBadge(trend.classification)}</TableCell>
+                          <TableCell className="text-right font-mono text-sm">
+                            <span className={trend.change_percent > 0 ? (trend.classification === 'IMPROVING' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400') : (trend.classification === 'IMPROVING' ? 'text-green-600 dark:text-green-400' : trend.classification === 'STABLE' ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400')}>
+                              {trend.change_percent > 0 ? '+' : ''}{trend.change_percent.toFixed(1)}%
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right text-gray-500 dark:text-zinc-400">{trend.first_value}</TableCell>
+                          <TableCell className="text-right font-bold text-gray-900 dark:text-zinc-100 px-8 flex items-center justify-end">
+                            {trend.latest_value}
+                            <ArrowRight className="h-4 w-4 ml-3 text-gray-300 dark:text-zinc-600" />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
