@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardMetrics } from '@/services/dashboard';
-import { getReportsList } from '@/services/reports';
+import { getReportsList, getReportDetails } from '@/services/reports';
 import { getTrends } from '@/services/trends';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { HeartPulse, Activity, TrendingUp, TrendingDown, Minus, CheckCircle2, AlertTriangle } from 'lucide-react';
@@ -14,18 +14,23 @@ export default function HealthSummaryExportPage() {
   const { user } = useAuth();
 
   const { data: metrics } = useQuery({ queryKey: ['dashboardMetrics'], queryFn: getDashboardMetrics });
-  const { data: reports } = useQuery({ queryKey: ['allReports'], queryFn: () => getReportsList(0, 100) });
+  const { data: reportsList } = useQuery({ queryKey: ['allReports'], queryFn: () => getReportsList(0, 100) });
   const { data: trends } = useQuery({ queryKey: ['trends'], queryFn: getTrends });
 
-  useEffect(() => {
-    // Auto-trigger print dialog once everything is likely loaded
-    const timer = setTimeout(() => {
-      window.print();
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  // Get full details of the latest report (which has patient_summary)
+  const latestReportId = reportsList?.[0]?.id;
+  const { data: latestReport } = useQuery({
+    queryKey: ['reportDetail', latestReportId],
+    queryFn: () => getReportDetails(latestReportId!),
+    enabled: !!latestReportId,
+  });
 
-  const latestReport = reports?.[0];
+  // Auto-trigger print dialog once data is ready
+  useEffect(() => {
+    if (!metrics || !reportsList) return;
+    const timer = setTimeout(() => { window.print(); }, 1500);
+    return () => clearTimeout(timer);
+  }, [metrics, reportsList]);
 
   return (
     <div className="print-container bg-white text-gray-900 min-h-screen">
@@ -46,7 +51,7 @@ export default function HealthSummaryExportPage() {
 
       {/* NO-PRINT banner for screen */}
       <div className="no-print mb-8 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-center text-blue-700">
-        <strong>Print Preview</strong> — Your browser's print dialog should open automatically. If not,{' '}
+        <strong>Print Preview</strong> — Your browser&apos;s print dialog will open shortly. If not,{' '}
         <button onClick={() => window.print()} className="underline font-semibold hover:text-blue-900">click here</button>.
       </div>
 
@@ -74,9 +79,9 @@ export default function HealthSummaryExportPage() {
         </h2>
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'Total Reports Analyzed', value: metrics?.total_reports ?? '-', color: 'bg-blue-50 border-blue-100', textColor: 'text-blue-700' },
-            { label: 'Abnormal Findings', value: metrics?.abnormal_findings ?? '-', color: 'bg-red-50 border-red-100', textColor: 'text-red-700' },
-            { label: 'Improving Trends', value: metrics?.improving_trends ?? '-', color: 'bg-green-50 border-green-100', textColor: 'text-green-700' },
+            { label: 'Total Reports Analyzed', value: metrics?.total_reports ?? '–', color: 'bg-blue-50 border-blue-100', textColor: 'text-blue-700' },
+            { label: 'Abnormal Findings', value: metrics?.abnormal_findings ?? '–', color: 'bg-red-50 border-red-100', textColor: 'text-red-700' },
+            { label: 'Improving Trends', value: metrics?.improving_trends ?? '–', color: 'bg-green-50 border-green-100', textColor: 'text-green-700' },
           ].map(m => (
             <div key={m.label} className={`${m.color} border rounded-2xl p-5 avoid-break`}>
               <p className="text-sm text-gray-500 font-medium">{m.label}</p>
@@ -87,34 +92,38 @@ export default function HealthSummaryExportPage() {
       </div>
 
       {/* === CLINICAL SUMMARY FROM LATEST REPORT === */}
-      {latestReport && (
-        <div className="avoid-break mb-10">
-          <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center">
-            <CheckCircle2 className="mr-2 h-5 w-5 text-blue-600" /> Latest Report — Clinical Summary
-          </h2>
-          <p className="text-sm text-gray-400 mb-4">
-            Report date: {new Date(latestReport.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-          {(latestReport as any).patient_summary ? (
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
-              <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider mb-2">Overall Assessment</h3>
-              <p className="text-gray-700 leading-relaxed">{(latestReport as any).patient_summary?.overall_assessment}</p>
-              {(latestReport as any).patient_summary?.follow_up_considerations?.length > 0 && (
-                <>
-                  <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider mt-5 mb-2">Clinical Next Steps</h3>
-                  <ul className="space-y-1 list-disc list-inside">
-                    {(latestReport as any).patient_summary.follow_up_considerations.map((c: string, i: number) => (
-                      <li key={i} className="text-gray-700 text-sm">{c}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          ) : (
-            <p className="text-gray-500 italic">No AI summary available for this report.</p>
-          )}
-        </div>
-      )}
+      <div className="avoid-break mb-10">
+        <h2 className="text-xl font-bold text-gray-800 mb-1 flex items-center">
+          <CheckCircle2 className="mr-2 h-5 w-5 text-blue-600" /> Latest Report — Clinical Summary
+        </h2>
+        {latestReport ? (
+          <>
+            <p className="text-sm text-gray-400 mb-4">
+              Report date: {new Date(latestReport.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            {latestReport.patient_summary ? (
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
+                <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider mb-2">Overall Assessment</h3>
+                <p className="text-gray-700 leading-relaxed">{latestReport.patient_summary.overall_assessment}</p>
+                {latestReport.patient_summary.follow_up_considerations?.length > 0 && (
+                  <>
+                    <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider mt-5 mb-2">Clinical Next Steps</h3>
+                    <ul className="space-y-1 list-disc list-inside">
+                      {latestReport.patient_summary.follow_up_considerations.map((c: string, i: number) => (
+                        <li key={i} className="text-gray-700 text-sm">{c}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500 italic">No AI summary available for this report.</p>
+            )}
+          </>
+        ) : (
+          <p className="text-gray-500 italic">{latestReportId ? 'Loading summary...' : 'No reports uploaded yet.'}</p>
+        )}
+      </div>
 
       {/* === BIOMARKER TRENDS === */}
       {trends && trends.trends.length > 0 && (
@@ -161,7 +170,7 @@ export default function HealthSummaryExportPage() {
                   <td className="py-3 px-3 text-right font-mono text-gray-600">{trend.first_value}</td>
                   <td className="py-3 px-3 text-right font-mono font-bold">{trend.latest_value}</td>
                   <td className={`py-3 px-3 text-right font-mono font-semibold ${
-                    trend.classification === 'IMPROVING' ? 'text-green-600' : 
+                    trend.classification === 'IMPROVING' ? 'text-green-600' :
                     trend.classification === 'DECLINING' ? 'text-red-600' : 'text-blue-600'
                   }`}>
                     {trend.change_percent > 0 ? '+' : ''}{trend.change_percent.toFixed(1)}%
@@ -176,7 +185,7 @@ export default function HealthSummaryExportPage() {
       {/* === DISCLAIMER === */}
       <div className="mt-12 pt-6 border-t-2 border-gray-200 text-xs text-gray-400 text-center">
         <AlertTriangle className="inline-block w-3 h-3 mr-1 mb-0.5" />
-        <strong>Medical Disclaimer:</strong> This report is generated by ClariMed AI for informational purposes only and does not constitute medical advice, diagnosis, or treatment. 
+        <strong>Medical Disclaimer:</strong> This report is generated by ClariMed AI for informational purposes only and does not constitute medical advice, diagnosis, or treatment.
         Always consult a qualified healthcare professional regarding your health. Generated on {new Date().toISOString()}.
       </div>
     </div>
