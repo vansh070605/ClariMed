@@ -20,9 +20,11 @@ ClariMed is an Explainable Healthcare Copilot that transforms static PDF lab rep
 - **PDF Upload:** Drag-and-drop secure file uploading.
 - **Deterministic Extraction:** Rule-based parser for structured extraction of biomarkers, values, units, and reference ranges.
 - **Clinical Interpretation Engine:** Deterministic logic evaluating biomarker flags and severity without relying on AI hallucination.
-- **Evidence-Based Summaries:** Contextual, patient-friendly summaries mapping structured findings into readable assessments.
-- **Longitudinal Trend Analysis:** Historic tracking of recurring biomarkers dynamically plotted.
-- **Dashboard & Report History:** Complete KPI visualization of user data, upload history, and trending health metrics.
+- **Evidence-Based Summaries & AI Assistant:** Chatbot powered by Google Gemini SDK (`google-genai`), using context-aware clinical data with automatic model fallback (`gemini-2.5-flash` -> `gemini-1.5-flash` -> `gemini-2.0-flash`) for robust offline/free-tier execution.
+- **Interactive Data Timelines**: Fluid longitudinal charting powered by Recharts (AreaChart), natively styled for light/dark modes.
+- **Live Notification Hub**: Real-time toast alerts driven by backend WebSockets when lab documents finish processing.
+- **Help Center Modal**: Interactive step-by-step portal walkthrough guide overlaying the page.
+- **Customized Settings panel**: Tabs for editing Personal Profile, Security Passwords, Notification parameters, and default Measurement Standards (Metric vs US convencional) saved to `localStorage`.
 
 ## 3. Why Deterministic Before AI?
 
@@ -49,10 +51,11 @@ For deep technical insights and flowcharts, please refer to the [Architecture Do
 **Frontend:**
 - Next.js 15 (App Router)
 - TypeScript
-- TailwindCSS
+- TailwindCSS v4
 - shadcn/ui
 - TanStack Query
-- Recharts
+- Recharts (Interactive charting)
+- Framer Motion (Page animations)
 
 **Backend:**
 - FastAPI
@@ -60,54 +63,62 @@ For deep technical insights and flowcharts, please refer to the [Architecture Do
 - SQLAlchemy
 - Alembic
 - PyMuPDF
+- Qdrant (Vector Database)
+- Google GenAI SDK (Gemini client integration)
 
 ## 6. Setup Instructions
 
-### Backend Startup
+### Environment Configuration
+1. Copy the root `.env.example` file and create a new **`.env`** file at the project root:
+   ```bash
+   cp .env.example .env
+   ```
+2. Configure your Google Gemini API Key inside `.env`:
+   ```env
+   GEMINI_API_KEY=your_actual_gemini_api_key_here
+   ```
+
+### Option A: Running inside Docker (Recommended)
+Make sure Docker Desktop is running, then launch the entire stack (Frontend, Backend, Postgres, Qdrant) with one command from the project root:
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate # or .\venv\Scripts\activate on Windows
-pip install -r requirements.txt
-
-# Start local server
-uvicorn app.main:app --reload
+docker-compose up --build -d
 ```
+- **Frontend URL**: `http://localhost:3000` (or `http://localhost:3001` if port 3000 is occupied)
+- **Backend API**: `http://localhost:8000`
+- **Qdrant dashboard**: `http://localhost:6333`
 
-### Database Migration
-```bash
-cd backend
-alembic upgrade head
-```
+---
 
-### Frontend Startup
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Option B: Local Host Development Startup
 
-### Docker Commands
-```bash
-# Navigate to backend directory
-cd backend
+#### Backend Startup
+1. Navigate to the backend directory and configure the environment:
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate # or .\venv\Scripts\activate on Windows
+   pip install -r requirements.txt
+   ```
+2. Run database migrations:
+   ```bash
+   alembic upgrade head
+   ```
+3. Start local backend server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
 
-# Copy and rename .env.example to .env
-cp .env.example .env
-
-# Edit .env with your local database credentials
-# Example:
-# POSTGRES_USER=myuser
-# POSTGRES_PASSWORD=mypassword
-# POSTGRES_SERVER=localhost
-# POSTGRES_PORT=5432
-
-# Navigate back to project root
-cd ..
-
-# Start backend using Docker Compose
-docker-compose up -d --build
-```
+#### Frontend Startup
+1. Navigate to the frontend directory and install dependencies:
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+2. Start development server:
+   ```bash
+   npm run dev
+   ```
+- Open `http://localhost:3000` to interact with the application locally.
 
 ## 7. API Overview
 
@@ -115,6 +126,7 @@ docker-compose up -d --build
 - **Reports:** `POST /reports/upload`, `GET /reports`, `GET /reports/{id}`
 - **Intelligence:** `POST /reports/{id}/analyze`, `POST /reports/{id}/summarize`
 - **Dashboard & Trends:** `GET /dashboard`, `GET /trends`, `GET /trends/history`
+- **Chat:** `POST /chat`
 
 *See [API Documentation](docs/api.md) for detailed payload structures.*
 
@@ -125,3 +137,4 @@ docker-compose up -d --build
 - **Cloud Storage:** S3 bucket integration replacing local ephemeral storage.
 - **Provider Dashboard:** A secondary interface allowing doctors to view multi-patient aggregate data.
 - **Production Monitoring:** Datadog/Sentry integration for observability.
+
