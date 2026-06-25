@@ -111,7 +111,7 @@ docker-compose up --build -d
 #### Frontend Startup
 1. Navigate to the frontend directory and install dependencies:
    ```bash
-   cd ../frontend
+   cd frontend
    npm install
    ```
 2. Start development server:
