@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -44,77 +45,237 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-3xl: 1.5rem;
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Stitch theme colors mapped dynamically */
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-surface-container: var(--surface-container);
+  --color-on-secondary: var(--on-secondary);
+  --color-surface-bright: var(--surface-bright);
+  --color-outline: var(--outline);
+  --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+  --color-on-surface: var(--on-surface);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-on-primary: var(--on-primary);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-on-secondary-fixed: var(--on-secondary-fixed);
+  --color-on-primary-fixed: var(--on-primary-fixed);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-surface-tint: var(--surface-tint);
+  --color-on-background: var(--on-background);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-error-container: var(--error-container);
+  --color-error: var(--error);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-on-error: var(--on-error);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-outline-variant: var(--outline-variant);
+  --color-on-error-container: var(--on-error-container);
+  --color-inverse-primary: var(--inverse-primary);
+  --color-primary-container: var(--primary-container);
+  --color-surface-dim: var(--surface-dim);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-surface: var(--surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  
+  /* Slate overrides for dynamic theme support */
+  --color-slate-50: var(--slate-50);
+  --color-slate-100: var(--slate-100);
+
+  /* Stitch Custom Spacing */
+  --spacing-section-margin: 3rem;
+  --spacing-island-padding: 1.5rem 2rem;
+  --spacing-grid-gutter: 1.5rem;
+  --spacing-container-padding: 2rem;
+  --spacing-element-gap: 1.5rem;
+
+  /* Soft island shadow */
+  --shadow-soft: var(--shadow-soft-var);
 }
 
 :root {
-  --background: oklch(0.98 0 0); /* Slightly off-white for medical feel */
-  --foreground: oklch(0.1 0 0); /* High contrast */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.1 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.1 0 0);
-  --primary: oklch(0.488 0.243 264.376); /* #2563EB */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: oklch(0.488 0.243 264.376); /* #2563EB */
-  --chart-2: oklch(0.704 0.191 22.216); /* Red */
-  --chart-3: oklch(0.75 0.15 80); /* Yellow-Orange */
-  --chart-4: oklch(0.65 0.15 150); /* Green */
-  --chart-5: oklch(0.85 0.1 200); /* Teal */
-  --radius: 0.75rem; /* 12px base, card will use 24px directly in classes */
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  /* Slate and basic backgrounds */
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --shadow-soft-var: 0 8px 30px rgba(0, 0, 0, 0.04);
+
+  --background: #f8fafc; /* Slate-50 background for clinical portals */
+  --foreground: #1b1b24; /* on-surface */
+  --card: #ffffff; /* surface-container-lowest */
+  --card-foreground: #1b1b24;
+  --popover: #ffffff;
+  --popover-foreground: #1b1b24;
+  --primary: #3525cd; /* Stitch primary deep purple-blue */
+  --primary-foreground: #ffffff;
+  --secondary: #505f76;
+  --secondary-foreground: #ffffff;
+  --muted: #f5f2ff; /* surface-container-low */
+  --muted-foreground: #464555;
+  --accent: #f0ecf9; /* surface-container */
+  --accent-foreground: #1b1b24;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(199, 196, 216, 0.4); /* outline-variant */
+  --input: rgba(199, 196, 216, 0.6);
+  --ring: #3525cd;
+  --chart-1: #3525cd;
+  --chart-2: #ffb695;
+  --chart-3: #7e3000;
+  --chart-4: #ba1a1a;
+  --chart-5: #505f76;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1b1b24;
+  --sidebar-primary: #3525cd;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0ecf9;
+  --sidebar-accent-foreground: #1b1b24;
+  --sidebar-border: rgba(199, 196, 216, 0.4);
+  --sidebar-ring: #3525cd;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  /* Stitch details */
+  --primary-fixed-dim: #c3c0ff;
+  --surface-container: #f0ecf9;
+  --on-secondary: #ffffff;
+  --surface-bright: #fcf8ff;
+  --outline: #777587;
+  --tertiary-fixed-dim: #ffb695;
+  --on-surface: #1b1b24;
+  --on-secondary-container: #54647a;
+  --on-primary: #ffffff;
+  --inverse-on-surface: #f3effc;
+  --on-tertiary-container: #ffd2be;
+  --on-secondary-fixed: #0b1c30;
+  --on-primary-fixed: #0f0069;
+  --inverse-surface: #302f39;
+  --surface-tint: #4d44e3;
+  --on-background: #1b1b24;
+  --surface-variant: #e4e1ee;
+  --on-tertiary-fixed: #351000;
+  --error-container: #ffdad6;
+  --error: #ba1a1a;
+  --secondary-container: #d0e1fb;
+  --on-secondary-fixed-variant: #38485d;
+  --surface-container-low: #f5f2ff;
+  --on-error: #ffffff;
+  --primary-fixed: #e2dfff;
+  --outline-variant: #c7c4d8;
+  --on-error-container: #93000a;
+  --inverse-primary: #c3c0ff;
+  --primary-container: #4f46e5;
+  --surface-dim: #dcd8e5;
+  --on-primary-fixed-variant: #3323cc;
+  --on-tertiary-fixed-variant: #7b2f00;
+  --on-tertiary: #ffffff;
+  --on-primary-container: #dad7ff;
+  --surface: #fcf8ff;
+  --on-surface-variant: #464555;
+  --secondary-fixed: #d3e4fe;
+  --surface-container-lowest: #ffffff;
+  --tertiary: #7e3000;
+  --tertiary-container: #a44100;
+  --secondary-fixed-dim: #b7c8e1;
+  --surface-container-high: #eae6f4;
+  --surface-container-highest: #e4e1ee;
+  --tertiary-fixed: #ffdbcc;
 }
 
 .dark {
-  --background: oklch(0.1 0 0);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.13 0 0);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.13 0 0);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.488 0.243 264.376); /* #2563EB */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.2 0 0);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.18 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.18 0 0);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.2 0 0);
-  --input: oklch(0.2 0 0);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: oklch(0.488 0.243 264.376); /* #2563EB */
-  --chart-2: oklch(0.704 0.191 22.216); /* Red */
-  --chart-3: oklch(0.75 0.15 80); /* Yellow-Orange */
-  --chart-4: oklch(0.65 0.15 150); /* Green */
-  --chart-5: oklch(0.85 0.1 200); /* Teal */
-  --sidebar: oklch(0.13 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.2 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.2 0 0);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  /* Dark mode overrides */
+  --slate-50: #121118; /* Dark base background */
+  --slate-100: #1b1a24;
+  --shadow-soft-var: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+  --background: #121118;
+  --foreground: #f3effc;
+  --card: #1b1b24; /* surface-container-lowest */
+  --card-foreground: #f3effc;
+  --popover: #1b1b24;
+  --popover-foreground: #f3effc;
+  --primary: #c3c0ff; /* Light lavender primary accent */
+  --primary-foreground: #0f0069;
+  --secondary: #b7c8e1;
+  --secondary-foreground: #0b1c30;
+  --muted: #2d2a38; /* surface-container-high */
+  --muted-foreground: #c7c4d8;
+  --accent: #25232e; /* surface-container */
+  --accent-foreground: #f3effc;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(119, 117, 135, 0.3); /* outline-variant */
+  --input: rgba(119, 117, 135, 0.4);
+  --ring: #c3c0ff;
+  --sidebar: #1b1b24;
+  --sidebar-foreground: #f3effc;
+  --sidebar-primary: #c3c0ff;
+  --sidebar-primary-foreground: #0f0069;
+  --sidebar-accent: #25232e;
+  --sidebar-accent-foreground: #f3effc;
+  --sidebar-border: rgba(119, 117, 135, 0.3);
+  --sidebar-ring: #c3c0ff;
+
+  /* Stitch details overrides for high-contrast dark mode */
+  --primary-fixed-dim: #c3c0ff;
+  --surface-container: #25232e;
+  --on-secondary: #ffffff;
+  --surface-bright: #2b2836;
+  --outline: #777587;
+  --tertiary-fixed-dim: #ffb695;
+  --on-surface: #f3effc;
+  --on-secondary-container: #d3e4fe;
+  --on-primary: #0f0069;
+  --inverse-on-surface: #1b1b24;
+  --on-tertiary-container: #351000;
+  --on-secondary-fixed: #d3e4fe;
+  --on-primary-fixed: #e2dfff;
+  --inverse-surface: #eae6f4;
+  --surface-tint: #c3c0ff;
+  --on-background: #f3effc;
+  --surface-variant: #353242;
+  --on-tertiary-fixed: #ffdbcc;
+  --error-container: #93000a;
+  --error: #ffb4ab;
+  --secondary-container: #38485d;
+  --on-secondary-fixed-variant: #b7c8e1;
+  --surface-container-low: #1e1c26;
+  --on-error: #690005;
+  --primary-fixed: #e2dfff;
+  --outline-variant: rgba(119, 117, 135, 0.3);
+  --on-error-container: #ffdad6;
+  --inverse-primary: #3525cd;
+  --primary-container: #3525cd;
+  --surface-dim: #121118;
+  --on-primary-fixed-variant: #c3c0ff;
+  --on-tertiary-fixed-variant: #ffb695;
+  --on-tertiary: #351000;
+  --on-primary-container: #e2dfff;
+  --surface: #1e1c26;
+  --on-surface-variant: #c7c4d8;
+  --secondary-fixed: #d3e4fe;
+  --surface-container-lowest: #1b1b24;
+  --tertiary: #ffb695;
+  --tertiary-container: #ffb695;
+  --secondary-fixed-dim: #b7c8e1;
+  --surface-container-high: #2d2a38;
+  --surface-container-highest: #353242;
+  --tertiary-fixed: #ffdbcc;
 }
 
 @layer base {
@@ -127,6 +288,74 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Custom Text Size Utility Classes from Stitch */
+@utility text-headline-md {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 24px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+@utility text-display {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+@utility text-headline-lg-mobile {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+@utility text-headline-lg {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+@utility text-body-sm {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+@utility text-label-md {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+
+@utility text-label-sm {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+@utility text-body-md {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+@utility text-title-lg {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 600;
 }
 
 @media print {

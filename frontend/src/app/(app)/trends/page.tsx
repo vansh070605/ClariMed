@@ -101,7 +101,7 @@ export default function TrendsPage() {
           <div className="flex items-center pl-3 text-gray-400 border-r dark:border-zinc-800 pr-3">
             <Filter className="w-4 h-4" />
           </div>
-          <Select value={timeRange} onValueChange={setTimeRange}>
+          <Select value={timeRange} onValueChange={(val) => val && setTimeRange(val)}>
             <SelectTrigger className="w-[140px] border-0 shadow-none focus:ring-0 bg-transparent text-sm font-medium">
               <SelectValue placeholder="Time Range" />
             </SelectTrigger>
@@ -112,7 +112,7 @@ export default function TrendsPage() {
             </SelectContent>
           </Select>
           <div className="w-px h-6 bg-gray-200 dark:bg-zinc-800" />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={(val) => val && setSelectedCategory(val)}>
             <SelectTrigger className="w-[160px] border-0 shadow-none focus:ring-0 bg-transparent text-sm font-medium">
               <SelectValue placeholder="Category" />
             </SelectTrigger>

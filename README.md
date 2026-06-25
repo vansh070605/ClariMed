@@ -89,7 +89,24 @@ npm run dev
 
 ### Docker Commands
 ```bash
-docker-compose up -d # Starts Postgres and backend
+# Navigate to backend directory
+cd backend
+
+# Copy and rename .env.example to .env
+cp .env.example .env
+
+# Edit .env with your local database credentials
+# Example:
+# POSTGRES_USER=myuser
+# POSTGRES_PASSWORD=mypassword
+# POSTGRES_SERVER=localhost
+# POSTGRES_PORT=5432
+
+# Navigate back to project root
+cd ..
+
+# Start backend using Docker Compose
+docker-compose up -d --build
 ```
 
 ## 7. API Overview

@@ -15,7 +15,7 @@ export interface TrendsResponse {
   trends: TrendAnalysis[];
 }
 
-export type TrendHistoryResponse = Record<string, { date: string; value: number }[]>;
+export type TrendHistoryResponse = Record<string, { category: string; history: { date: string; value: number }[] }>;
 
 export const getTrends = async (): Promise<TrendsResponse> => {
   const response = await api.get<TrendsResponse>('/trends');

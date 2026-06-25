@@ -75,7 +75,7 @@ export default function SharedClinicalPortal() {
                 </CardTitle>
               </div>
               <Badge variant="outline" className="bg-white dark:bg-black font-mono">
-                {report.measurements.filter(m => m.abnormal_flag).length} Abnormal Findings
+                {report.measurements.filter((m: any) => m.abnormal_flag).length} Abnormal Findings
               </Badge>
             </div>
           </CardHeader>
@@ -94,7 +94,7 @@ export default function SharedClinicalPortal() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {report.measurements.map((m) => (
+                  {report.measurements.map((m: any) => (
                     <TableRow key={m.id} className={m.abnormal_flag ? "bg-red-50/30 dark:bg-red-900/10" : ""}>
                       <TableCell className="font-semibold text-gray-900 dark:text-zinc-100 px-6 py-3 capitalize">{m.biomarker_name}</TableCell>
                       <TableCell className="text-right font-mono font-medium">{m.value}</TableCell>
