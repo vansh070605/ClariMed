@@ -49,13 +49,13 @@ export function ShareWithDoctorModal({ reportId, children }: ShareWithDoctorModa
 
   return (
     <Dialog open={open} onOpenChange={(val) => { setOpen(val); if (!val) setTimeout(reset, 300); }}>
-      <DialogTrigger asChild>
-        {children || (
+      <DialogTrigger render={
+        (children as any) || (
           <Button variant="outline" size="sm" className="rounded-full shadow-sm">
             <Share2 className="w-4 h-4 mr-2" /> Share with Doctor
           </Button>
-        )}
-      </DialogTrigger>
+        )
+      } />
       <DialogContent className="sm:max-w-md bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-gray-200 dark:border-zinc-800 rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-xl flex items-center">
@@ -74,7 +74,7 @@ export function ShareWithDoctorModal({ reportId, children }: ShareWithDoctorModa
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-zinc-300">Link Expires In</label>
-                <Select value={expiresIn} onValueChange={setExpiresIn}>
+                <Select value={expiresIn} onValueChange={(val) => val && setExpiresIn(val)}>
                   <SelectTrigger className="w-full bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 rounded-xl h-11">
                     <SelectValue placeholder="Select duration" />
                   </SelectTrigger>

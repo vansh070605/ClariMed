@@ -2,9 +2,14 @@
 
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
+import { HoneycombNav } from '@/components/layout/HoneycombNav';
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     let wasDark = false;
     const handleBeforePrint = () => {
@@ -29,16 +34,36 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex h-screen print:h-auto overflow-hidden print:overflow-visible bg-[#f8fafc] dark:bg-[#09090b] print:bg-white print:dark:bg-white transition-colors duration-200">
-      {/* Subtle modern background gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/40 via-transparent to-transparent dark:from-blue-900/10 pointer-events-none -z-10" />
+    <div className="flex h-screen print:h-auto overflow-hidden print:overflow-visible bg-slate-50 dark:bg-[#1b1b24]/40 text-on-surface font-body-md transition-colors duration-200">
+      {/* Floating Island Sidebar */}
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden print:overflow-visible relative z-0">
+      
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden relative print:h-auto print:overflow-visible z-0">
+        {/* Floating Top Header */}
         <Header />
-        <main className="flex-1 overflow-y-auto print:overflow-visible p-4 sm:p-6 lg:p-8">
-          {children}
+        
+        {/* Scrollable Content Container */}
+        <main className="flex-1 overflow-y-auto px-8 py-8 print:overflow-visible print:px-0 print:py-0">
+          <div className="max-w-7xl mx-auto space-y-8 pb-12 print:pb-0">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </main>
       </div>
+
+      {/* Floating Honeycomb Navigation Menu */}
+      <HoneycombNav />
     </div>
   );
 }
+

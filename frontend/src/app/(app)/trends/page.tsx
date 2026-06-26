@@ -93,7 +93,7 @@ export default function TrendsPage() {
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-50">Health Trends</h1>
-          <p className="text-gray-500 dark:text-zinc-400 mt-2">Track biomarker progression across your clinical history.</p>
+          <p className="text-muted-foreground mt-2">Track biomarker progression across your clinical history.</p>
         </div>
         
         {/* Filters */}
@@ -101,7 +101,7 @@ export default function TrendsPage() {
           <div className="flex items-center pl-3 text-gray-400 border-r dark:border-zinc-800 pr-3">
             <Filter className="w-4 h-4" />
           </div>
-          <Select value={timeRange} onValueChange={setTimeRange}>
+          <Select value={timeRange} onValueChange={(val) => val && setTimeRange(val)}>
             <SelectTrigger className="w-[140px] border-0 shadow-none focus:ring-0 bg-transparent text-sm font-medium">
               <SelectValue placeholder="Time Range" />
             </SelectTrigger>
@@ -112,7 +112,7 @@ export default function TrendsPage() {
             </SelectContent>
           </Select>
           <div className="w-px h-6 bg-gray-200 dark:bg-zinc-800" />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={(val) => val && setSelectedCategory(val)}>
             <SelectTrigger className="w-[160px] border-0 shadow-none focus:ring-0 bg-transparent text-sm font-medium">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -126,7 +126,7 @@ export default function TrendsPage() {
       </motion.div>
 
       {(trendsLoading || historyLoading) ? (
-        <div className="flex items-center justify-center min-h-[40vh] text-gray-500">Loading trend analysis...</div>
+        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">Loading trend analysis...</div>
       ) : (!trendsData || trendsData.trends.length === 0) ? (
         <motion.div variants={itemVariants}>
           <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800">
@@ -135,7 +135,7 @@ export default function TrendsPage() {
                 <TrendingUp className="h-10 w-10 text-blue-300 dark:text-blue-500/50" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-zinc-100">Insufficient Data for Trends</h3>
-              <p className="mt-2 text-gray-500 dark:text-zinc-400 max-w-sm">Upload at least two medical reports to unlock longitudinal tracking and AI trend analysis.</p>
+              <p className="mt-2 text-muted-foreground max-w-sm">Upload at least two medical reports to unlock longitudinal tracking and AI trend analysis.</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -223,7 +223,7 @@ export default function TrendsPage() {
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full flex flex-col items-center justify-center text-gray-400 dark:text-zinc-600 border-2 border-dashed border-gray-200 dark:border-zinc-800 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/30">
+                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border/80 rounded-2xl bg-muted/20 dark:bg-muted/10">
                       <Activity className="h-8 w-8 mb-3 opacity-50" />
                       <p>Insufficient data points in this time range to map {selectedBiomarker.replace('_', ' ')} trajectory.</p>
                     </div>
@@ -268,7 +268,7 @@ export default function TrendsPage() {
                           <TableCell className="text-right text-gray-500 dark:text-zinc-400">{trend.first_value}</TableCell>
                           <TableCell className="text-right font-bold text-gray-900 dark:text-zinc-100 px-8 flex items-center justify-end">
                             {trend.latest_value}
-                            <ArrowRight className="h-4 w-4 ml-3 text-gray-300 dark:text-zinc-600" />
+                            <ArrowRight className="h-4 w-4 ml-3 text-slate-300 dark:text-zinc-400" />
                           </TableCell>
                         </TableRow>
                       ))}

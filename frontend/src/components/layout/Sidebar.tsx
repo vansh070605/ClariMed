@@ -10,10 +10,9 @@ import {
   TrendingUp,
   Settings,
   LogOut,
-  Activity,
+  HeartPulse,
   Bot
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -29,59 +28,49 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-gray-200/50 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-xl dark:border-zinc-800/50 transition-colors duration-200 print:hidden shadow-sm">
-      <div className="flex h-16 items-center border-b border-gray-200/50 dark:border-zinc-800/50 px-6">
-        <Activity className="h-6 w-6 text-blue-600 dark:text-blue-500" />
-        <span className="ml-2 text-xl font-bold text-gray-900 dark:text-zinc-50">ClariMed</span>
+    <nav className="bg-card rounded-3xl m-6 h-[calc(100vh-3rem)] w-64 shadow-soft border border-border flex flex-col py-8 space-y-2 flex-shrink-0 hidden lg:flex z-10 relative transition-all duration-300">
+      {/* Brand Header */}
+      <div className="px-8 pb-6 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+          <HeartPulse className="h-5 w-5 text-white animate-pulse" />
+        </div>
+        <div>
+          <h1 className="text-title-lg font-bold text-primary dark:text-primary-fixed-dim tracking-tight">ClariMed</h1>
+          <p className="text-label-sm text-on-surface-variant">Clinical Portal</p>
+        </div>
       </div>
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-1 px-3">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard');
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="relative block"
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="active-nav"
-                    className="absolute inset-0 bg-blue-50 dark:bg-blue-900/20 rounded-md"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                )}
-                <div
-                  className={`relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'text-blue-700 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100'
-                  }`}
-                >
-                  <item.icon
-                    className={`mr-3 h-5 w-5 flex-shrink-0 transition-colors ${
-                      isActive ? 'text-blue-700 dark:text-blue-400' : 'text-gray-400 dark:text-zinc-500'
-                    }`}
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
+
+      {/* Navigation Items */}
+      <div className="flex-1 overflow-y-auto px-4 space-y-1">
+        {navItems.map((item) => {
+          const isActive = pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard');
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-full scale-95 active:scale-90 transition-all duration-200 ${
+                isActive
+                  ? 'bg-secondary-container dark:bg-on-secondary-container/20 text-on-secondary-container dark:text-secondary-fixed shadow-sm font-semibold'
+                  : 'text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container dark:hover:bg-surface-variant/10'
+              }`}
+            >
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              <span className="text-label-md">{item.name}</span>
+            </Link>
+          );
+        })}
       </div>
-      <div className="border-t border-gray-200/50 dark:border-zinc-800/50 p-4">
+
+      {/* Logout Action Button */}
+      <div className="px-6 pt-4 mt-auto">
         <button
           onClick={logout}
-          className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-colors"
+          className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full py-3 px-4 text-label-md font-semibold hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md cursor-pointer"
         >
-          <LogOut className="mr-3 h-5 w-5 text-gray-400 dark:text-zinc-500 group-hover:text-red-700 dark:group-hover:text-red-400" aria-hidden="true" />
+          <LogOut className="h-4 w-4" />
           Logout
         </button>
       </div>
-    </div>
+    </nav>
   );
 }
