@@ -49,6 +49,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up ClariMed AI API...")
+    logger.info(f"CORS Allowed Origins: {origins}")
     # Add initializations for DB, Qdrant here later
 
 @app.get("/")
