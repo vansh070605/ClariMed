@@ -23,16 +23,19 @@ class ChatResponse(BaseModel):
 def chat_with_assistant(
     request: ChatRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     # Build clinical context from latest report
-    report = db.query(Report).filter(
-        Report.user_id == current_user.id
-    ).order_by(desc(Report.created_at)).first()
+    report = (
+        db.query(Report)
+        .filter(Report.user_id == current_user.id)
+        .order_by(desc(Report.created_at))
+        .first()
+    )
 
     if report and report.patient_summary:
-        key_findings = report.patient_summary.get('key_findings', [])
-        overall = report.patient_summary.get('overall_assessment', '')
+        key_findings = report.patient_summary.get("key_findings", [])
+        overall = report.patient_summary.get("overall_assessment", "")
         context = f"Overall assessment: {overall}. Key findings: {key_findings}"
     else:
         context = "The patient has no uploaded reports or AI summaries yet."
@@ -50,7 +53,10 @@ Instructions:
 - Keep the response concise (2–4 paragraphs max).
 """
 
-    no_key = not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY in ("[GCP_API_KEY]", "your_gemini_api_key_here")
+    no_key = not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY in (
+        "[GCP_API_KEY]",
+        "your_gemini_api_key_here",
+    )
 
     if no_key:
         # Fallback response when no API key is configured
@@ -66,6 +72,7 @@ Instructions:
     try:
         try:
             import google.genai as genai
+
             client = genai.Client(api_key=settings.GEMINI_API_KEY)
             try:
                 # Try gemini-2.5-flash first as it is active and supported on the free tier
@@ -90,6 +97,7 @@ Instructions:
         except (ImportError, ModuleNotFoundError):
             # Fallback to older google-generativeai SDK if the server process hasn't been restarted
             import google.generativeai as old_genai
+
             old_genai.configure(api_key=settings.GEMINI_API_KEY)
             try:
                 model = old_genai.GenerativeModel("gemini-2.5-flash")

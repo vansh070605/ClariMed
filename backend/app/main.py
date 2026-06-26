@@ -1,9 +1,10 @@
 import logging
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings
 from jose import jwt, JWTError
 from app.core.config import settings as core_settings
+
 
 # --- Configuration ---
 class Settings(BaseSettings):
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
 
 settings = Settings()
 
@@ -30,11 +32,13 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=settings.app_name,
     version=settings.version,
-    description="Backend API for ClariMed AI - An Explainable Healthcare Copilot"
+    description="Backend API for ClariMed AI - An Explainable Healthcare Copilot",
 )
 
 # CORS Configuration
-origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]
+origins = [
+    origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,35 +50,34 @@ app.add_middleware(
 
 # --- Routes ---
 
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up ClariMed AI API...")
     logger.info(f"CORS Allowed Origins: {origins}")
     # Add initializations for DB, Qdrant here later
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to ClariMed AI API"}
 
+
 @app.get("/health")
 def health_check():
     """Basic health check endpoint"""
-    return {
-        "status": "healthy",
-        "version": settings.version
-    }
+    return {"status": "healthy", "version": settings.version}
+
 
 @app.get("/health/deep")
 def deep_health_check():
     """Deep health check to verify connections to Postgres, Qdrant, etc. (To be implemented)"""
-    return {
-        "status": "healthy",
-        "database": "pending",
-        "qdrant": "pending"
-    }
+    return {"status": "healthy", "database": "pending", "qdrant": "pending"}
+
 
 # --- WebSockets ---
 from app.websockets import manager
+
 
 @app.websocket("/ws/notifications")
 async def websocket_endpoint(websocket: WebSocket):
@@ -82,9 +85,11 @@ async def websocket_endpoint(websocket: WebSocket):
     if not token:
         await websocket.close(code=1008)
         return
-        
+
     try:
-        payload = jwt.decode(token, core_settings.JWT_SECRET, algorithms=[core_settings.JWT_ALGORITHM])
+        payload = jwt.decode(
+            token, core_settings.JWT_SECRET, algorithms=[core_settings.JWT_ALGORITHM]
+        )
         user_id: str = payload.get("sub")
         if user_id is None:
             await websocket.close(code=1008)
@@ -100,6 +105,7 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket, user_id)
+
 
 # --- Routes ---
 from app.auth.router import router as auth_router

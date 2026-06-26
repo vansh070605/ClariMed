@@ -1,5 +1,6 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
 from typing import List, Optional
+
 
 class TrendSummary(BaseModel):
     biomarker: str
@@ -8,6 +9,7 @@ class TrendSummary(BaseModel):
     first_value: Optional[float]
     latest_value: Optional[float]
     report_count: int
+
 
 class TrendResponse(BaseModel):
     total_reports: int

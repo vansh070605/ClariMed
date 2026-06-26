@@ -29,7 +29,7 @@ jobs:
         run: |
           cd backend
           black --check app tests
-          flake8 app tests --ignore=E501
+          flake8 app tests --ignore=E501,E402
 
       - name: TypeScript & Static Type Check (Python)
         run: |

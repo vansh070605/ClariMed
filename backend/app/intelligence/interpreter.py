@@ -1,9 +1,12 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
-def interpret_measurement(value: float, ref_low: float, ref_high: float) -> Dict[str, Any]:
+
+def interpret_measurement(
+    value: float, ref_low: float, ref_high: float
+) -> Dict[str, Any]:
     """
     Deterministically interprets a measurement's severity and deviation percent.
-    
+
     Returns:
         {
             "status": "NORMAL" | "LOW" | "HIGH",
@@ -11,18 +14,14 @@ def interpret_measurement(value: float, ref_low: float, ref_high: float) -> Dict
             "delta_percent": float
         }
     """
-    
+
     # Check for Normal
     if ref_low <= value <= ref_high:
-        return {
-            "status": "NORMAL",
-            "severity": "NORMAL",
-            "delta_percent": 0.0
-        }
-        
+        return {"status": "NORMAL", "severity": "NORMAL", "delta_percent": 0.0}
+
     deviation = 0.0
     status = ""
-    
+
     if value < ref_low:
         status = "LOW"
         if ref_low > 0:
@@ -31,9 +30,9 @@ def interpret_measurement(value: float, ref_low: float, ref_high: float) -> Dict
         status = "HIGH"
         if ref_high > 0:
             deviation = (value - ref_high) / ref_high
-            
+
     delta_percent = deviation * 100.0
-    
+
     # Severity bands based on deviation percent
     severity = "NORMAL"
     if 0 < delta_percent <= 10.0:
@@ -42,13 +41,14 @@ def interpret_measurement(value: float, ref_low: float, ref_high: float) -> Dict
         severity = "MODERATE"
     elif delta_percent > 25.0:
         severity = "SEVERE"
-        
+
     # Standardize precision to 2 decimal places, but we can return float
     return {
         "status": status,
         "severity": severity,
-        "delta_percent": round(delta_percent, 2)
+        "delta_percent": round(delta_percent, 2),
     }
+
 
 def apply_interpretation(measurement: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -57,7 +57,7 @@ def apply_interpretation(measurement: Dict[str, Any]) -> Dict[str, Any]:
     value = measurement.get("value")
     ref_low = measurement.get("reference_low")
     ref_high = measurement.get("reference_high")
-    
+
     if value is not None and ref_low is not None and ref_high is not None:
         interpretation = interpret_measurement(value, ref_low, ref_high)
         measurement["status"] = interpretation["status"]
@@ -67,5 +67,5 @@ def apply_interpretation(measurement: Dict[str, Any]) -> Dict[str, Any]:
         measurement["status"] = None
         measurement["severity"] = None
         measurement["delta_percent"] = None
-        
+
     return measurement

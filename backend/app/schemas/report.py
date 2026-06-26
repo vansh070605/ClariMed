@@ -2,6 +2,7 @@ from pydantic import BaseModel, UUID4
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
+
 class ReportMeasurementBase(BaseModel):
     biomarker_name: str
     category: Optional[str] = None
@@ -15,6 +16,7 @@ class ReportMeasurementBase(BaseModel):
     delta_percent: Optional[float] = None
     overall_confidence: Optional[float] = None
 
+
 class ReportMeasurementResponse(ReportMeasurementBase):
     id: UUID4
     report_id: UUID4
@@ -24,12 +26,14 @@ class ReportMeasurementResponse(ReportMeasurementBase):
     class Config:
         from_attributes = True
 
+
 class ReportBase(BaseModel):
     file_path: str
     status: str
     file_hash: Optional[str] = None
     file_size: Optional[float] = None
     page_count: Optional[float] = None
+
 
 class ReportResponse(ReportBase):
     id: UUID4
@@ -43,19 +47,21 @@ class ReportResponse(ReportBase):
     class Config:
         from_attributes = True
 
+
 class ReportListResponse(BaseModel):
     id: UUID4
     status: str
     file_size: Optional[float] = None
     page_count: Optional[float] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 class ReportDetailResponse(ReportListResponse):
     measurements: List[ReportMeasurementResponse] = []
     patient_summary: Optional[Dict[str, Any]] = None
-    
+
     class Config:
         from_attributes = True

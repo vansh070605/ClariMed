@@ -3,6 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def extract_text_from_pdf(file_path: str):
     """
     Extracts raw text from a PDF file using PyMuPDF.
