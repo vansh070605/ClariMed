@@ -2,9 +2,14 @@
 
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
+import { HoneycombNav } from '@/components/layout/HoneycombNav';
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     let wasDark = false;
     const handleBeforePrint = () => {
@@ -41,10 +46,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Scrollable Content Container */}
         <main className="flex-1 overflow-y-auto px-8 py-8 print:overflow-visible print:px-0 print:py-0">
           <div className="max-w-7xl mx-auto space-y-8 pb-12 print:pb-0">
-            {children}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </main>
       </div>
+
+      {/* Floating Honeycomb Navigation Menu */}
+      <HoneycombNav />
     </div>
   );
 }
+

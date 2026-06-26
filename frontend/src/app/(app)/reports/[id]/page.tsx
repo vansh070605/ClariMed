@@ -25,7 +25,7 @@ export default function ReportDetailsPage() {
   });
 
   if (isLoading) {
-    return <div className="min-h-[50vh] flex items-center justify-center text-gray-500">Loading clinical intelligence...</div>;
+    return <div className="min-h-[50vh] flex items-center justify-center text-muted-foreground">Loading clinical intelligence...</div>;
   }
 
   if (error || !report) {
@@ -33,7 +33,7 @@ export default function ReportDetailsPage() {
       <div className="min-h-[50vh] flex flex-col items-center justify-center text-center">
         <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">Report Unavailable</h2>
-        <p className="text-sm text-gray-500 mt-2 max-w-sm">The requested medical report could not be found or you lack permission to view it.</p>
+        <p className="text-sm text-muted-foreground mt-2 max-w-sm">The requested medical report could not be found or you lack permission to view it.</p>
       </div>
     );
   }
@@ -76,9 +76,9 @@ export default function ReportDetailsPage() {
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-50">Report Intelligence</h1>
-          <p className="text-gray-500 dark:text-zinc-400 mt-2">Comprehensive clinical analysis and biomarker extraction.</p>
+          <p className="text-muted-foreground mt-2">Comprehensive clinical analysis and biomarker extraction.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <ShareWithDoctorModal reportId={reportId} />
           <Button variant="outline" size="sm" className="print:hidden rounded-full font-medium" onClick={() => window.print()}>
             <Download className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
@@ -100,28 +100,28 @@ export default function ReportDetailsPage() {
         <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Calendar className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
-            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Processed On</p>
+            <p className="text-sm font-medium text-muted-foreground">Processed On</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">{new Date(report.created_at).toLocaleDateString()}</p>
           </CardContent>
         </Card>
         <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Activity className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
-            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Analysis Status</p>
+            <p className="text-sm font-medium text-muted-foreground">Analysis Status</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1 capitalize">{report.status}</p>
           </CardContent>
         </Card>
         <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <FileText className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
-            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Document Length</p>
+            <p className="text-sm font-medium text-muted-foreground">Document Length</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">{report.page_count || 1} Pages</p>
           </CardContent>
         </Card>
         <Card className="border-0 ring-1 ring-gray-200 dark:ring-zinc-800 bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-zinc-900/60 dark:to-zinc-950/60 backdrop-blur-md">
           <CardContent className="p-6">
             <Database className="h-5 w-5 text-gray-400 dark:text-zinc-500 mb-4" />
-            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">File Size</p>
+            <p className="text-sm font-medium text-muted-foreground">File Size</p>
             <p className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">{report.file_size ? `${(report.file_size / 1024).toFixed(1)} KB` : 'N/A'}</p>
           </CardContent>
         </Card>
@@ -161,7 +161,7 @@ export default function ReportDetailsPage() {
                   </div>
                 )}
                 
-                <div className="bg-white/60 dark:bg-black/20 p-4 rounded-2xl text-xs text-gray-500 dark:text-zinc-500 mt-6 flex items-start">
+                <div className="bg-white/60 dark:bg-black/20 p-4 rounded-2xl text-xs text-muted-foreground mt-6 flex items-start">
                   <Info className="w-4 h-4 mr-2 shrink-0 mt-0.5" />
                   <span><strong>Disclaimer:</strong> {report.patient_summary.disclaimer}</span>
                 </div>
@@ -224,7 +224,7 @@ export default function ReportDetailsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {report.measurements.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-muted-foreground">
                 No measurements could be extracted from this report.
               </div>
             ) : (
@@ -244,10 +244,10 @@ export default function ReportDetailsPage() {
                     {report.measurements.map((m) => (
                       <TableRow key={m.id} className="border-b-gray-100 dark:border-b-zinc-800/50 hover:bg-gray-50 dark:hover:bg-zinc-900/50">
                         <TableCell className="font-semibold text-gray-900 dark:text-zinc-100 px-6 py-4 capitalize">{m.biomarker_name}</TableCell>
-                        <TableCell className="text-gray-500 dark:text-zinc-400 capitalize">{m.category || '-'}</TableCell>
+                        <TableCell className="text-muted-foreground capitalize">{m.category || '-'}</TableCell>
                         <TableCell className="text-right font-medium text-gray-900 dark:text-zinc-100">{m.value}</TableCell>
-                        <TableCell className="text-gray-500 dark:text-zinc-400">{m.unit || '-'}</TableCell>
-                        <TableCell className="text-gray-500 dark:text-zinc-400 text-sm">
+                        <TableCell className="text-muted-foreground">{m.unit || '-'}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
                           {m.reference_low !== null && m.reference_high !== null 
                             ? `${m.reference_low} - ${m.reference_high}` 
                             : 'N/A'}

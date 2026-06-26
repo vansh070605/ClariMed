@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Search, Moon, Sun, X, Activity, Settings, LogOut, HelpCircle, UploadCloud, TrendingUp, Bot, FileText, Heart } from 'lucide-react';
+import { Bell, Search, Moon, Sun, X, Activity, Settings, LogOut, HelpCircle, UploadCloud, TrendingUp, Bot, FileText, Heart, HeartPulse } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
@@ -74,10 +74,18 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-card/80 backdrop-blur-md rounded-full mt-6 mx-8 px-6 py-3 shadow-soft border border-border sticky top-0 z-50 flex justify-between items-center w-auto transition-all duration-300 print:hidden">
-        {/* Search Bar */}
-        <div className="flex items-center gap-4 flex-1">
-          <div className="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300 rounded-full">
+      <header className="bg-card/80 backdrop-blur-md rounded-full mt-6 mx-4 sm:mx-8 px-4 sm:px-6 py-2.5 sm:py-3 shadow-soft border border-border sticky top-0 z-50 flex justify-between items-center w-auto transition-all duration-300 print:hidden">
+        {/* Mobile Logo & Brand (Visible on mobile/tablet, hidden on desktop layout where sidebar is active) */}
+        <div className="flex lg:hidden items-center gap-2.5 mr-4 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+            <HeartPulse className="h-5 w-5 text-white animate-pulse" />
+          </div>
+          <span className="font-extrabold text-lg text-primary dark:text-primary-fixed-dim tracking-tight">ClariMed</span>
+        </div>
+
+        {/* Search Bar (Hidden on mobile, visible on tablet/desktop viewports) */}
+        <div className="hidden md:flex items-center gap-4 flex-1 max-w-md mr-4">
+          <div className="relative w-full focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300 rounded-full">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant h-4 w-4" />
             <input
               type="text"
@@ -88,7 +96,7 @@ export function Header() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Theme Switcher */}
           {mounted && (
             <button
@@ -147,13 +155,13 @@ export function Header() {
           {/* Interactive Help Guide Button */}
           <button
             onClick={() => setIsGuideOpen(true)}
-            className="p-2.5 text-on-surface-variant hover:bg-surface-container rounded-full transition-all cursor-pointer outline-none"
+            className="hidden sm:inline-flex p-2.5 text-on-surface-variant hover:bg-surface-container rounded-full transition-all cursor-pointer outline-none"
             title="Open Portal Guide"
           >
             <HelpCircle className="h-5 w-5" />
           </button>
 
-          <div className="w-px h-8 bg-border mx-2"></div>
+          <div className="w-px h-6 bg-border mx-1 sm:mx-2"></div>
 
           {/* User Profile Dropdown Menu */}
           <DropdownMenu>

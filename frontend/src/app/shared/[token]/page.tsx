@@ -24,7 +24,7 @@ export default function SharedClinicalPortal() {
   }, [token]);
 
   if (loading) {
-    return <div className="min-h-[50vh] flex items-center justify-center text-gray-500">Loading Clinical Data...</div>;
+    return <div className="min-h-[50vh] flex items-center justify-center text-muted-foreground">Loading Clinical Data...</div>;
   }
 
   if (error || !data) {
@@ -32,7 +32,7 @@ export default function SharedClinicalPortal() {
       <div className="min-h-[50vh] flex flex-col items-center justify-center text-center">
         <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">Link Invalid or Expired</h2>
-        <p className="text-sm text-gray-500 mt-2 max-w-sm">{error || "This secure medical link is no longer active."}</p>
+        <p className="text-sm text-muted-foreground mt-2 max-w-sm">{error || "This secure medical link is no longer active."}</p>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default function SharedClinicalPortal() {
           </CardHeader>
           <CardContent className="p-0">
             {report.measurements.length === 0 ? (
-              <div className="p-6 text-gray-500">No structured biomarkers extracted for this report.</div>
+              <div className="p-6 text-muted-foreground">No structured biomarkers extracted for this report.</div>
             ) : (
               <Table>
                 <TableHeader>
@@ -98,8 +98,8 @@ export default function SharedClinicalPortal() {
                     <TableRow key={m.id} className={m.abnormal_flag ? "bg-red-50/30 dark:bg-red-900/10" : ""}>
                       <TableCell className="font-semibold text-gray-900 dark:text-zinc-100 px-6 py-3 capitalize">{m.biomarker_name}</TableCell>
                       <TableCell className="text-right font-mono font-medium">{m.value}</TableCell>
-                      <TableCell className="text-gray-500 dark:text-zinc-400">{m.unit || '-'}</TableCell>
-                      <TableCell className="text-gray-500 dark:text-zinc-400 text-sm font-mono">
+                      <TableCell className="text-muted-foreground">{m.unit || '-'}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm font-mono">
                         {m.reference_low !== null && m.reference_high !== null 
                           ? `[${m.reference_low} - ${m.reference_high}]` 
                           : '-'}
@@ -117,7 +117,7 @@ export default function SharedClinicalPortal() {
       ))}
 
       {data.reports.length === 0 && (
-        <div className="text-center py-12 text-gray-500">No reports available to display.</div>
+        <div className="text-center py-12 text-muted-foreground">No reports available to display.</div>
       )}
     </div>
   );

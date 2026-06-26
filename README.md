@@ -21,10 +21,13 @@ ClariMed is an Explainable Healthcare Copilot that transforms static PDF lab rep
 - **Deterministic Extraction:** Rule-based parser for structured extraction of biomarkers, values, units, and reference ranges.
 - **Clinical Interpretation Engine:** Deterministic logic evaluating biomarker flags and severity without relying on AI hallucination.
 - **Evidence-Based Summaries & AI Assistant:** Chatbot powered by Google Gemini SDK (`google-genai`), using context-aware clinical data with automatic model fallback (`gemini-2.5-flash` -> `gemini-1.5-flash` -> `gemini-2.0-flash`) for robust offline/free-tier execution.
-- **Interactive Data Timelines**: Fluid longitudinal charting powered by Recharts (AreaChart), natively styled for light/dark modes.
-- **Live Notification Hub**: Real-time toast alerts driven by backend WebSockets when lab documents finish processing.
-- **Help Center Modal**: Interactive step-by-step portal walkthrough guide overlaying the page.
-- **Customized Settings panel**: Tabs for editing Personal Profile, Security Passwords, Notification parameters, and default Measurement Standards (Metric vs US convencional) saved to `localStorage`.
+- **Interactive Data Timelines:** Fluid longitudinal charting powered by Recharts (AreaChart), natively styled for light/dark modes.
+- **Live Notification Hub:** Real-time toast alerts driven by backend WebSockets when lab documents finish processing.
+- **Help Center Modal:** Interactive step-by-step portal walkthrough guide overlaying the page.
+- **Customized Settings Panel:** Tabs for editing Personal Profile, Security Passwords, Notification parameters, and default Measurement Standards (Metric vs US convencional) saved to `localStorage`.
+- **Premium Space Obsidian Theme:** Redesigned UI with a deep obsidian base (`#09070f`), obsidian-violet cards (`#13111c`), and electric violet accents (`#6355ff`) for maximum readability and visual excellence.
+- **Framer Motion Fluid Animations:** Implemented spring-bloom route transitions and dynamic interactive elements across the platform.
+- **Responsive Honeycomb Overlay Menu:** A mobile-native navigation FAB that springs open a geometrical honeycomb cluster (pointy-topped hexagons) on mobile/tablet viewports, automatically scaling to prevent screen boundary overflows.
 
 ## 3. Why Deterministic Before AI?
 
@@ -42,9 +45,13 @@ By ensuring that the core data extraction and clinical flag evaluations are dete
 - **Reduced Hallucinations:** Any future LLM usage is strictly limited to translating *already structured* interpretations into human-readable tone.
 - **Easier Debugging:** Pipeline stages are fully isolated.
 
-## 4. Architecture Overview
+## 4. Technical Documentation Blueprints
 
-For deep technical insights and flowcharts, please refer to the [Architecture Documentation](docs/architecture.md).
+For deep technical insights, infrastructure diagrams, and security outlines, please refer to our dedicated documentation guides:
+- 🛠️ **[Architecture Mapping](docs/architecture.md):** System layout, DB relational models, and websocket communication flows.
+- 🚀 **[Deployment Guide](docs/deployment.md):** Serverless hosting setups (Railway, Vercel), containerized environments (Docker), and production configuration checklists.
+- 🛡️ **[Security & Compliance Blueprint](docs/security.md):** Session constraints, ownership verification, and HIPAA production staging roadmap.
+- 📜 **[API Specification](docs/api.md):** REST and WebSockets payloads and schemas.
 
 ## 5. Tech Stack
 
@@ -120,7 +127,16 @@ docker-compose up --build -d
    ```
 - Open `http://localhost:3000` to interact with the application locally.
 
-## 7. API Overview
+## 7. Developer Community & CI/CD
+
+ClariMed is equipped with complete workspace standards to streamline development and verify integrations:
+- 🤝 **[Contributing Guidelines](CONTRIBUTING.md):** Setting up environments, Git branches, formatting check commands, and coding standards.
+- ⚖️ **[MIT License](LICENSE):** Standardized open source licensing.
+- 🛡️ **[Code of Conduct](CODE_OF_CONDUCT.md):** Community covenant regulations.
+- ⚙️ **[Automated CI/CD Workflow](.github/workflows/ci.yml):** GitHub Actions verifying linting (Ruff/Black/ESLint), static types (Mypy), Python test assertions (Pytest), and frontend production builds (`npm run build`) on every push/PR.
+- 📬 **[PR & Issue Templates](.github/):** Standardized PR review checklists and issue report forms.
+
+## 8. API Overview
 
 - **Auth:** `POST /auth/register`, `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`
 - **Reports:** `POST /reports/upload`, `GET /reports`, `GET /reports/{id}`
@@ -130,7 +146,7 @@ docker-compose up --build -d
 
 *See [API Documentation](docs/api.md) for detailed payload structures.*
 
-## 8. Future Roadmap
+## 9. Future Roadmap
 
 - **OCR Recovery Layer:** Adding Tesseract/AWS Textract for scanned image-based PDFs.
 - **Multi-Lab Support:** Advanced parsers for varying vendor templates (Quest, LabCorp).

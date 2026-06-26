@@ -68,7 +68,7 @@ export default function DashboardPage() {
           <h2 className="text-headline-lg text-on-surface">Welcome Back{user?.name ? `, ${user.name}` : ''}</h2>
           <p className="text-body-md text-on-surface-variant mt-1">Track, analyze and understand your health reports with clinical intelligence.</p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex flex-wrap gap-2 shrink-0">
           <ShareWithDoctorModal>
             <Button variant="outline" className="rounded-full px-5 py-2.5 font-semibold text-label-md border-slate-200 hover:bg-slate-50 dark:hover:bg-zinc-800 shadow-sm cursor-pointer text-on-surface">
               Share Profile

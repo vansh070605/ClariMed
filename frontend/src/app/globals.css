@@ -198,83 +198,81 @@
 }
 
 .dark {
-  /* Dark mode overrides */
-  --slate-50: #121118; /* Dark base background */
-  --slate-100: #1b1a24;
-  --shadow-soft-var: 0 8px 30px rgba(0, 0, 0, 0.2);
+  /* Premium Obsidian & Electric Violet Space Dark Theme */
+  --slate-50: #09070f; /* Obsidian deep background */
+  --slate-100: #13111c; /* Obsidian card level */
+  --shadow-soft-var: 0 10px 40px rgba(0, 0, 0, 0.35);
 
-  --background: #121118;
+  --background: #09070f;
   --foreground: #f3effc;
-  --card: #1b1b24; /* surface-container-lowest */
+  --card: #13111c;
   --card-foreground: #f3effc;
-  --popover: #1b1b24;
+  --popover: #13111c;
   --popover-foreground: #f3effc;
-  --primary: #c3c0ff; /* Light lavender primary accent */
-  --primary-foreground: #0f0069;
-  --secondary: #b7c8e1;
-  --secondary-foreground: #0b1c30;
-  --muted: #2d2a38; /* surface-container-high */
-  --muted-foreground: #c7c4d8;
-  --accent: #25232e; /* surface-container */
+  --primary: #6355ff; /* Vibrant Electric Violet Primary */
+  --primary-foreground: #ffffff;
+  --secondary: #7e889b;
+  --secondary-foreground: #f3effc;
+  --muted: #1d1b29;
+  --muted-foreground: #a6a3be;
+  --accent: #1d1b29;
   --accent-foreground: #f3effc;
-  --destructive: #ba1a1a;
-  --destructive-foreground: #ffffff;
-  --border: rgba(119, 117, 135, 0.3); /* outline-variant */
-  --input: rgba(119, 117, 135, 0.4);
-  --ring: #c3c0ff;
-  --sidebar: #1b1b24;
+  --border: rgba(131, 117, 216, 0.15); /* Soft violet-tinted borders */
+  --input: rgba(131, 117, 216, 0.2);
+  --ring: #6355ff;
+  --sidebar: #0d0b14;
   --sidebar-foreground: #f3effc;
-  --sidebar-primary: #c3c0ff;
-  --sidebar-primary-foreground: #0f0069;
-  --sidebar-accent: #25232e;
+  --sidebar-primary: #6355ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1d1b29;
   --sidebar-accent-foreground: #f3effc;
-  --sidebar-border: rgba(119, 117, 135, 0.3);
-  --sidebar-ring: #c3c0ff;
+  --sidebar-border: rgba(131, 117, 216, 0.12);
+  --sidebar-ring: #6355ff;
 
-  /* Stitch details overrides for high-contrast dark mode */
-  --primary-fixed-dim: #c3c0ff;
-  --surface-container: #25232e;
+  /* Custom clinical details overrides for high-end dark mode */
+  --primary-fixed-dim: #8b7aff;
+  --surface-container: #1d1b29;
   --on-secondary: #ffffff;
-  --surface-bright: #2b2836;
-  --outline: #777587;
+  --surface-bright: #1f1c2b;
+  --outline: #837fa2;
   --tertiary-fixed-dim: #ffb695;
   --on-surface: #f3effc;
   --on-secondary-container: #d3e4fe;
-  --on-primary: #0f0069;
-  --inverse-on-surface: #1b1b24;
+  --on-primary: #ffffff;
+  --inverse-on-surface: #13111c;
   --on-tertiary-container: #351000;
   --on-secondary-fixed: #d3e4fe;
   --on-primary-fixed: #e2dfff;
   --inverse-surface: #eae6f4;
-  --surface-tint: #c3c0ff;
+  --surface-tint: #6355ff;
   --on-background: #f3effc;
-  --surface-variant: #353242;
+  --surface-variant: #282436;
   --on-tertiary-fixed: #ffdbcc;
-  --error-container: #93000a;
+  --error-container: #83060a;
   --error: #ffb4ab;
-  --secondary-container: #38485d;
+  --secondary-container: #263345;
   --on-secondary-fixed-variant: #b7c8e1;
-  --surface-container-low: #1e1c26;
-  --on-error: #690005;
+  --surface-container-low: #151322;
+  --on-error: #600002;
   --primary-fixed: #e2dfff;
-  --outline-variant: rgba(119, 117, 135, 0.3);
+  --outline-variant: rgba(131, 117, 216, 0.15);
   --on-error-container: #ffdad6;
-  --inverse-primary: #3525cd;
-  --primary-container: #3525cd;
-  --surface-dim: #121118;
-  --on-primary-fixed-variant: #c3c0ff;
+  --inverse-primary: #6355ff;
+  --primary-container: #6355ff;
+  --surface-dim: #09070f;
+  --on-primary-fixed-variant: #8b7aff;
   --on-tertiary-fixed-variant: #ffb695;
   --on-tertiary: #351000;
   --on-primary-container: #e2dfff;
-  --surface: #1e1c26;
-  --on-surface-variant: #c7c4d8;
+  --surface: #151322;
+  --on-surface-variant: #a6a3be;
   --secondary-fixed: #d3e4fe;
-  --surface-container-lowest: #1b1b24;
+  --surface-container-lowest: #0d0b14;
   --tertiary: #ffb695;
   --tertiary-container: #ffb695;
   --secondary-fixed-dim: #b7c8e1;
-  --surface-container-high: #2d2a38;
-  --surface-container-highest: #353242;
+  --surface-container-high: #232032;
+  --surface-container-highest: #2d293d;
   --tertiary-fixed: #ffdbcc;
 }
 

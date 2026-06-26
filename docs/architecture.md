@@ -1,51 +1,158 @@
-# Architecture Documentation
+# Architectural Documentation
 
-This document maps out the system components and internal data flows of the ClariMed platform.
+This document maps out the system components, data schemas, and internal data pipelines of the ClariMed platform.
 
-## System Architecture
+---
 
-The overarching system is built on a modern decoupled stack featuring Next.js (Frontend), FastAPI (Backend), and PostgreSQL (Database). 
+## 1. Core System Architecture
+
+ClariMed is structured as a decoupled full-stack platform:
+1. **Frontend Client (Next.js 15):** Built with TypeScript, Tailwind CSS v4, and React components. It communicates with the backend via RESTful APIs and real-time WebSockets.
+2. **Backend API (FastAPI):** Python-based API server handling business logic, user authentication (HttpOnly Cookie-based JWT), processing queues, and deterministic biomarker parsing.
+3. **Database (PostgreSQL):** Relational store managed via SQLAlchemy ORM and Alembic migrations, holding users, reports, measurements, and summaries.
+4. **Vector Database (Qdrant):** Vector indexing store containing parsed patient data embeddings used for semantically querying patient clinical history in the AI assistant chat.
 
 ```mermaid
 graph TD
-    A[User / Browser] -->|HTTP Requests| B[Next.js App Router]
-    B -->|API Calls + HttpOnly Cookies| C[FastAPI Backend]
-    C -->|SQLAlchemy ORM| D[(PostgreSQL)]
-    
-    subgraph Frontend
-    B
+    User[User Browser] -->|HTTP Requests| Client[Next.js Frontend]
+    User -->|WebSocket Feed| Client
+    Client -->|REST API Calls & HttpOnly JWT| API[FastAPI Backend]
+    API -->|SQLAlchemy ORM| DB[(PostgreSQL)]
+    API -->|gRPC / HTTP| Qdrant[(Qdrant Vector DB)]
+    API -->|Google GenAI SDK| Gemini[Gemini API]
+
+    subgraph User Space
+        User
     end
-    
-    subgraph Backend Services
-    C
-    D
+
+    subgraph Hydrated Client
+        Client
+    end
+
+    subgraph Service Layer
+        API
+        DB
+        Qdrant
     end
 ```
 
-## Clinical Intelligence Pipeline
+---
 
-Rather than relying on non-deterministic LLMs to execute medical interpretation, ClariMed utilizes a fully deterministic processing pipeline before generating natural language summaries.
+## 2. Relational Database Schema
+
+The relational database layer consists of 4 main tables:
+
+```mermaid
+erDiagram
+    USERS {
+        uuid id PK
+        string name
+        string email UK
+        string password_hash
+        timestamp created_at
+    }
+    REPORTS {
+        uuid id PK
+        uuid user_id FK
+        string filename
+        integer file_size
+        integer page_count
+        string status
+        timestamp created_at
+    }
+    MEASUREMENTS {
+        uuid id PK
+        uuid report_id FK
+        string biomarker_name
+        string category
+        float value
+        string unit
+        float reference_low
+        float reference_high
+        boolean abnormal_flag
+        string severity
+    }
+    PATIENT_SUMMARIES {
+        uuid id PK
+        uuid report_id FK
+        text overall_assessment
+        text interpretation
+        string classification
+        json key_findings
+        json follow_up_considerations
+        text disclaimer
+    }
+
+    USERS ||--o{ REPORTS : "uploads"
+    REPORTS ||--o{ MEASUREMENTS : "contains"
+    REPORTS ||--|| PATIENT_SUMMARIES : "summarizes"
+```
+
+---
+
+## 3. Clinical Intelligence Pipeline
+
+Rather than passing raw text directly to a generative LLM (which introduces a high risk of medical hallucination), ClariMed isolates processing into a strict deterministic phase followed by a generative/summarization phase.
 
 ```mermaid
 graph TD
-    A[PDF Upload] --> B[PyMuPDF Parser]
-    B --> C[Extraction Engine]
-    C --> D[Schema Validation]
-    D --> E[Clinical Interpretation]
-    E --> F[Summary Generation]
-    F --> G[Longitudinal Trend Analysis]
+    A[PDF Lab Report] -->|Upload| B[PyMuPDF Parser]
+    B -->|Raw Text Extract| C[Biomarker Extraction Engine]
+    C -->|Regex Rules & Alias Mapping| D[Reference Range Validator]
+    D -->|Evaluation Logic| E[Abnormal Flag & Severity Generator]
+    E -->|Structured Payload| F[PostgreSQL / Qdrant Write]
+    F -->|Construct Context| G[LLM Patient-Friendly Summarizer]
+    G -->|Gemini Output Validation| H[Render UI Insights & Trends]
 
     subgraph Deterministic Layer
-    B
-    C
-    D
-    E
+        B
+        C
+        D
+        E
     end
 
-    subgraph Aggregation Layer
-    F
-    G
+    subgraph Storage Layer
+        F
+    end
+
+    subgraph Generative Layer
+        G
     end
 ```
 
-*(You can export these diagrams to create `docs/architecture.png` if needed using standard Mermaid tooling).*
+### Deterministic Extraction Phase:
+1. **PyMuPDF Parser:** Extracts raw character blocks and spatial coordinates from the PDF.
+2. **Extraction Engine:** Scans text lines utilizing regular expressions and pre-compiled biomarker maps.
+3. **Reference Range Validator:** Evaluates whether values sit within healthy boundaries (accounting for aliases, measurement standards, and flags).
+4. **Severity Generator:** Categorizes abnormal bounds (e.g. `NORMAL`, `ABNORMAL`, `CRITICAL`) using standardized diagnostic thresholds.
+
+### Generative AI Phase (Google Gemini SDK):
+- Context templates are injected with the *fully structured output* generated by the deterministic layer.
+- Gemini is requested to construct an empathetic, plain-language patient summary (Overall Assessment, Key Findings, and Actionable Steps).
+- The prompt restricts Gemini from creating any medical conclusions or clinical numbers not present in the input context.
+- **Failover Chain:** Features automated failovers (`gemini-2.5-flash` -> `gemini-1.5-flash` -> `gemini-2.0-flash`) to ensure reliable operation.
+
+---
+
+## 4. Real-time Notification Architecture
+
+WebSockets are utilized to update the frontend application instantly when long-running reports finish processing:
+
+```mermaid
+sequenceDiagram
+    participant User as Frontend Client
+    participant API as FastAPI Gateway
+    participant Worker as Background Task
+    
+    User->>API: Connect to /ws (Headers carry Session Cookie)
+    API-->>User: WebSocket Connected
+    User->>API: Upload Report (POST /reports/upload)
+    API-->>User: 202 Accepted (Return Report ID)
+    API->>Worker: Dispatch Analysis (AsyncTask)
+    Note over Worker: PyMuPDF Parse & Range Eval
+    Note over Worker: Gemini Summary Generation
+    Worker->>API: Update Report Status = "completed"
+    API->>User: Push WS Message {"type": "report_status", "id": "uuid", "status": "completed"}
+    User->>API: Fetch Report Details (GET /reports/{id})
+    API-->>User: Return Extracted Data & Summary
+```
