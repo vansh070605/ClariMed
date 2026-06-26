@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // Backend URL
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000', // Backend URL
   withCredentials: true, // Crucial for sending HttpOnly cookies
   headers: {
     'Content-Type': 'application/json',
