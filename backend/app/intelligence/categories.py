@@ -3,15 +3,13 @@ CATEGORY_MAPPINGS = {
     "white_blood_cells": "CBC",
     "red_blood_cells": "CBC",
     "platelets": "CBC",
-    
     "hba1c": "Diabetes",
     "glucose": "Diabetes",
-    
     "tsh": "Thyroid",
-    
     "ldl_cholesterol": "Lipid Profile",
     "hdl_cholesterol": "Lipid Profile",
 }
+
 
 def get_biomarker_category(name: str) -> str:
     """
@@ -20,5 +18,5 @@ def get_biomarker_category(name: str) -> str:
     """
     if not name:
         return "Other"
-        
+
     return CATEGORY_MAPPINGS.get(name.lower(), "Other")

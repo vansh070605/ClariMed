@@ -2,6 +2,7 @@ from fastapi import WebSocket
 from typing import Dict, List
 import json
 
+
 class ConnectionManager:
     def __init__(self):
         # Maps user_id (str) to a list of active WebSockets
@@ -27,5 +28,6 @@ class ConnectionManager:
                     await connection.send_text(json.dumps(message))
                 except Exception:
                     pass
+
 
 manager = ConnectionManager()
